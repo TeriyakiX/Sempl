@@ -69,8 +69,10 @@ return [
     |
     */
 
+
     'links' => [
         public_path('storage') => storage_path('app/public'),
+        base_path('public_html') => base_path('public'),
     ],
 
 ];
