@@ -23,7 +23,6 @@ class UserRequest extends FormRequest
             'app_name' => 'required',
             'email' => 'required|email|unique:users',
             'address' => 'required',
-            'role' => 'required|in:0',
         ];
     }
 

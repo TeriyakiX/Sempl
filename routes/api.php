@@ -10,7 +10,13 @@ use App\Http\Controllers\ProductController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware('check.admin.creation')->group(function () {
+    Route::prefix('users')->group(function () {
+        Route::post('/create-admin', [UserController::class, 'createAdmin']);
+    });
+});
+
+Route::middleware(['auth:api', 'admin'])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
 

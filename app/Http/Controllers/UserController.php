@@ -40,4 +40,15 @@ class UserController extends Controller
         $user->delete();
         return response()->json(['message' => 'User deleted successfully'], 200);
     }
+
+    public function createAdmin(UserRequest $request)
+    {
+        $admin = new User();
+        $admin->fill($request->validated());
+        $admin->password = Hash::make($request->password);
+        $admin->role = '1';
+        $admin->save();
+
+        return response()->json($admin, 201);
+    }
 }
