@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -10,6 +11,8 @@ use App\Http\Controllers\ProductController;
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:api')->group(function () {
+
+    Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::prefix('users')->group(function () {
         Route::get('/index', [UserController::class, 'index']);
@@ -30,6 +33,13 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/create', [CategoryController::class, 'create']);
         Route::put('/{category}/update', [CategoryController::class, 'update']);
         Route::delete('/{category}/delete', [CategoryController::class, 'destroy']);
+    });
+
+    Route::prefix('orders')->group(function () {
+        Route::get('/index', [OrderController::class, 'index']);
+        Route::post('/create', [OrderController::class, 'store']);
+        Route::put('/{order}/update', [OrderController::class, 'update']);
+        Route::delete('/{order}/delete', [OrderController::class, 'destroy']);
     });
 
 });

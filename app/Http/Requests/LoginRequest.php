@@ -18,4 +18,20 @@ class LoginRequest extends FormRequest
             'password' => 'required',
         ];
     }
+    public function messages()
+    {
+        return [
+            'email.required' => 'Поле :attribute является обязательным.',
+            'email.email' => 'Поле :attribute должно быть действительным адресом электронной почты.',
+            'password.required' => 'Поле :attribute является обязательным.',
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'email' => 'адрес электронной почты',
+            'password' => 'пароль',
+        ];
+    }
 }

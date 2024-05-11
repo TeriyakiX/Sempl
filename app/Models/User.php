@@ -26,6 +26,9 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'address',
         'role',
+        'want_advertising',
+        'accept_policy',
+
     ];
 
     protected $hidden = [
@@ -47,6 +50,10 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 
 
 }

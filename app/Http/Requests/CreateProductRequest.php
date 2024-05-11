@@ -10,12 +10,6 @@ class CreateProductRequest extends FormRequest
     {
         return true;
     }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules()
     {
         return [
@@ -25,4 +19,30 @@ class CreateProductRequest extends FormRequest
             'category_id' => 'required|exists:categories,id',
         ];
     }
+    public function messages()
+    {
+        return [
+            'name.required' => 'Поле :attribute является обязательным.',
+            'name.string' => 'Поле :attribute должно быть строкой.',
+            'name.max' => 'Поле :attribute не должно превышать :max символов.',
+            'description.required' => 'Поле :attribute является обязательным.',
+            'description.string' => 'Поле :attribute должно быть строкой.',
+            'photo.string' => 'Поле :attribute должно быть строкой.',
+            'photo.max' => 'Поле :attribute не должно превышать :max символов.',
+            'category_id.required' => 'Поле :attribute является обязательным.',
+            'category_id.exists' => 'Выбранная :attribute не существует.',
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'name' => 'название',
+            'description' => 'описание',
+            'photo' => 'фото',
+            'category_id' => 'категория',
+        ];
+    }
+
+
 }
