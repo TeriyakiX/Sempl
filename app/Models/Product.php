@@ -21,4 +21,25 @@ class Product extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+    public function updateRating()
+    {
+        $totalReviews = $this->reviews()->count();
+        $totalRating = $this->reviews()->sum('rating');
+
+        if ($totalReviews > 0) {
+            $averageRating = $totalRating / $totalReviews;
+            $this->rating = $averageRating;
+        } else {
+            $this->rating = 0;
+        }
+
+        $this->save();
+
+        return $this->rating;
+    }
 }

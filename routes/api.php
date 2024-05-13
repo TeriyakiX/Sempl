@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -32,6 +33,7 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
         Route::post('/create', [ProductController::class, 'create']);
         Route::put('/{product}/update', [ProductController::class, 'update']);
         Route::delete('/{product}/delete', [ProductController::class, 'destroy']);
+        Route::get('/{product}/reviews', [ProductController::class, 'getProductReviews']);
     });
 
     Route::prefix('categories')->group(function () {
@@ -46,6 +48,15 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
         Route::post('/create', [OrderController::class, 'store']);
         Route::put('/{order}/update', [OrderController::class, 'update']);
         Route::delete('/{order}/delete', [OrderController::class, 'destroy']);
+    });
+
+    Route::prefix('reviews')->group(function () {
+        Route::get('/index', [ReviewController::class, 'index']);
+        Route::post('/create', [ReviewController::class, 'store']);
+        Route::get('/{review}', [ReviewController::class, 'show']);
+        Route::put('/{review}/update', [ReviewController::class, 'update']);
+        Route::delete('/{review}/delete', [ReviewController::class, 'destroy']);
+        Route::post('/{review}/media/upload', [ReviewController::class, 'uploadMedia'])->name('reviews.media.upload');
     });
 
 });

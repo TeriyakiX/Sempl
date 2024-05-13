@@ -23,7 +23,7 @@ class UserFactory extends Factory
     {
         return [
             'login' => $this->faker->userName,
-            'password' => bcrypt('password'), // Временный пароль, вы можете изменить его по вашему усмотрению
+            'password' => bcrypt('password'),
             'first_name' => $this->faker->firstName,
             'last_name' => $this->faker->lastName,
             'gender' => $this->faker->randomElement(['male', 'female']),

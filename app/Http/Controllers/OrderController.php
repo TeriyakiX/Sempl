@@ -24,11 +24,11 @@ class OrderController extends Controller
         $order->fill($request->validated());
         $order->save();
 
-        return new OrderResource($order);
-    }
+        $product = $order->product;
+        if ($product) {
+            $product->updateRating($request->rating);
+        }
 
-    public function show(Order $order)
-    {
         return new OrderResource($order);
     }
 
@@ -40,6 +40,16 @@ class OrderController extends Controller
             'photo' => $request->photo,
         ]);
 
+        $product = $order->product;
+        if ($product) {
+            $product->updateRating();
+        }
+
+        return new OrderResource($order);
+    }
+
+    public function show(Order $order)
+    {
         return new OrderResource($order);
     }
 

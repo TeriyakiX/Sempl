@@ -5,13 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class Review extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'product_id', 'user_id', 'delivery_status', 'review', 'photo', 'rating'
-    ];
+    protected $fillable = ['user_id', 'product_id', 'comment', 'rating'];
 
     public function product()
     {
@@ -20,8 +18,6 @@ class Order extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class); // Добавлено
     }
-
-
 }

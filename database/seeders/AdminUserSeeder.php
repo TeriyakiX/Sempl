@@ -13,7 +13,7 @@ class AdminUserSeeder extends Seeder
     {
         User::create([
             'login' => 'admin',
-            'password' => Hash::make('admin'), // Используем Hash::make для хеширования пароля
+            'password' => Hash::make('admin'),
             'first_name' => 'Admin',
             'last_name' => 'User',
             'gender' => 'male',
@@ -21,7 +21,7 @@ class AdminUserSeeder extends Seeder
             'app_name' => 'Admin App',
             'email' => 'admin@example.com',
             'address' => '123 Admin St, Admin City',
-            'role' => '1', // Устанавливаем роль пользователя как 1
+            'role' => '1',
         ]);
     }
 }
