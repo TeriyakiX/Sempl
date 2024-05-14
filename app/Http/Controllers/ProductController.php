@@ -22,6 +22,10 @@ class ProductController extends Controller
         $product = Product::create($request->validated());
         return new ProductResource($product);
     }
+    public function show(Product $product)
+    {
+        return new ProductResource($product);
+    }
 
     public function update(UpdateProductRequest $request, Product $product)
     {

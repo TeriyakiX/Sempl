@@ -24,6 +24,7 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
     Route::prefix('users')->group(function () {
         Route::get('/index', [UserController::class, 'index']);
         Route::post('/create', [UserController::class, 'create']);
+        Route::get('/{id}/show', [UserController::class, 'show']);
         Route::put('/{id}/update', [UserController::class, 'update']);
         Route::delete('/{id}/delete', [UserController::class, 'destroy']);
     });
@@ -31,6 +32,7 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
     Route::prefix('products')->group(function () {
         Route::get('/index', [ProductController::class, 'index']);
         Route::post('/create', [ProductController::class, 'create']);
+        Route::get('/{product}/show', [ProductController::class, 'show']);
         Route::put('/{product}/update', [ProductController::class, 'update']);
         Route::delete('/{product}/delete', [ProductController::class, 'destroy']);
         Route::get('/{product}/reviews', [ProductController::class, 'getProductReviews']);
@@ -39,6 +41,7 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
     Route::prefix('categories')->group(function () {
         Route::get('/index', [CategoryController::class, 'index']);
         Route::post('/create', [CategoryController::class, 'create']);
+        Route::get('/{category}/show', [CategoryController::class, 'show']);
         Route::put('/{category}/update', [CategoryController::class, 'update']);
         Route::delete('/{category}/delete', [CategoryController::class, 'destroy']);
     });
@@ -46,6 +49,7 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
     Route::prefix('orders')->group(function () {
         Route::get('/index', [OrderController::class, 'index']);
         Route::post('/create', [OrderController::class, 'store']);
+        Route::get('/{order}/show', [OrderController::class, 'show']);
         Route::put('/{order}/update', [OrderController::class, 'update']);
         Route::delete('/{order}/delete', [OrderController::class, 'destroy']);
     });

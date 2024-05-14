@@ -11,13 +11,19 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::with('subcategories')->whereNull('parent_id')->get();
         return CategoryResource::collection($categories);
     }
 
     public function create(CreateCategoryRequest $request)
     {
         $category = Category::create($request->validated());
+        return new CategoryResource($category);
+    }
+
+    public function show(Category $category)
+    {
+        $category->load('subcategories');
         return new CategoryResource($category);
     }
 
