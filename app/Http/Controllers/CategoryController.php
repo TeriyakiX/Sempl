@@ -17,7 +17,19 @@ class CategoryController extends Controller
 
     public function create(CreateCategoryRequest $request)
     {
-        $category = Category::create($request->validated());
+        $data = $request->validated();
+        $category = new Category([
+            'name' => $data['name'],
+        ]);
+        if (isset($data['parent_id'])) {
+            $parentCategory = Category::find($data['parent_id']);
+            if (!$parentCategory) {
+                return response()->json(['error' => 'Родительская категория не найдена'], 404);
+            }
+            $category->parent()->associate($parentCategory);
+        }
+        $category->save();
+
         return new CategoryResource($category);
     }
 
