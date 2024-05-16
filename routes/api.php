@@ -23,7 +23,7 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
 
     Route::prefix('users')->group(function () {
         Route::get('/index', [UserController::class, 'index']);
-        Route::post('/create', [UserController::class, 'create']);
+        Route::post('/create', [UserController::class, 'store']);
         Route::get('/{id}/show', [UserController::class, 'show']);
         Route::put('/{id}/update', [UserController::class, 'update']);
         Route::delete('/{id}/delete', [UserController::class, 'destroy']);

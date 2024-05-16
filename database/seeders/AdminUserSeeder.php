@@ -22,6 +22,21 @@ class AdminUserSeeder extends Seeder
             'email' => 'admin@example.com',
             'address' => '123 Admin St, Admin City',
             'role' => '1',
+            'people_living_with' => null,
+            'has_children' => null,
+            'pets' => null,
+            'average_monthly_income' => null,
+            'percentage_spent_on_cosmetics' => null,
+            'vk_profile' => null,
+            'telegram_profile' => null,
+            'profile_photo' => null,
+            'delivery_address' => null,
+            'city' => null,
+            'street' => null,
+            'house_number' => null,
+            'apartment_number' => null,
+            'entrance' => null,
+            'postal_code' => null,
         ]);
     }
 }
