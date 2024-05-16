@@ -23,6 +23,21 @@ class UserRequest extends FormRequest
             'app_name' => 'required',
             'email' => 'required|email|unique:users',
             'address' => 'required',
+            'people_living_with' => 'nullable|integer',
+            'has_children' => 'required|boolean',
+            'pets' => 'nullable|string',
+            'average_monthly_income' => 'nullable|numeric',
+            'percentage_spent_on_cosmetics' => 'nullable|numeric',
+            'vk_profile' => 'nullable|string',
+            'telegram_profile' => 'nullable|string',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'delivery_address' => 'required',
+            'city' => 'required',
+            'street' => 'required',
+            'house_number' => 'required',
+            'apartment_number' => 'nullable',
+            'entrance' => 'nullable',
+            'postal_code' => 'required',
         ];
     }
 

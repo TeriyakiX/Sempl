@@ -16,18 +16,11 @@ class User extends Authenticatable implements JWTSubject
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'login',
-        'password',
-        'first_name',
-        'last_name',
-        'gender',
-        'birthdate',
-        'app_name',
-        'email',
-        'address',
-        'role' => 0,
-        'want_advertising',
-        'accept_policy',
+        'login', 'password', 'first_name', 'last_name', 'gender', 'birthdate',
+        'app_name', 'email', 'address', 'role', 'people_living_with', 'has_children',
+        'pets', 'average_monthly_income', 'percentage_spent_on_cosmetics', 'vk_profile',
+        'telegram_profile', 'profile_photo', 'delivery_address', 'city', 'street',
+        'house_number', 'apartment_number', 'entrance', 'postal_code'
     ];
 
     protected $hidden = [
@@ -52,6 +45,22 @@ class User extends Authenticatable implements JWTSubject
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    protected $appends = ['full_address'];
+
+    public function getFullAddressAttribute()
+    {
+        $address = "{$this->delivery_address}, {$this->city}, {$this->street}, д. {$this->house_number}";
+        if ($this->apartment_number) {
+            $address .= ", кв. {$this->apartment_number}";
+        }
+        if ($this->entrance) {
+            $address .= ", подъезд {$this->entrance}";
+        }
+        $address .= ", {$this->postal_code}";
+
+        return $address;
     }
 
 
