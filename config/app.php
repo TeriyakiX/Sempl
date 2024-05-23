@@ -185,4 +185,5 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    'system_code' => env('SYSTEM_CODE'),
 ];

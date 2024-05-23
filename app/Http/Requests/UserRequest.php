@@ -38,6 +38,10 @@ class UserRequest extends FormRequest
             'apartment_number' => 'nullable',
             'entrance' => 'nullable',
             'postal_code' => 'required',
+            'phone' => 'required|numeric|unique:users',
+            'verification_code' => 'required|numeric',
+            'want_advertising' => 'required|boolean|accepted',
+            'accept_policy' => 'required|boolean|accepted',
         ];
     }
 
@@ -58,8 +62,8 @@ class UserRequest extends FormRequest
             'email.unique' => 'Пользователь с таким Email уже существует.',
             'address.required' => 'Поле Адрес является обязательным.',
             'role' => 'in:0',
-            'want_advertising' => 'required|boolean|accepted',
-            'accept_policy' => 'required|boolean|accepted',
+            'want_advertising.required' => 'Поле "Хотите получать рекламу" является обязательным.',
+            'accept_policy.required' => 'Поле "Принять политику" является обязательным.',
         ];
     }
 }

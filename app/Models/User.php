@@ -20,7 +20,7 @@ class User extends Authenticatable implements JWTSubject
         'app_name', 'email', 'address', 'role', 'people_living_with', 'has_children',
         'pets', 'average_monthly_income', 'percentage_spent_on_cosmetics', 'vk_profile',
         'telegram_profile', 'profile_photo', 'delivery_address', 'city', 'street',
-        'house_number', 'apartment_number', 'entrance', 'postal_code'
+        'house_number', 'apartment_number', 'entrance', 'postal_code', 'phone', 'verification_code', 'code_sent_at'
     ];
 
     protected $hidden = [

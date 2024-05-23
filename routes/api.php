@@ -9,7 +9,16 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 
+
+Route::post('/send-code', [AuthController::class, 'sendVerificationCode']);
+Route::post('/verify-code-and-register', [AuthController::class, 'completeRegistration']);
+
+Route::post('/send-code-auth', [AuthController::class, 'sendVerificationCodeAuth']);
+Route::post('/verify-code-and-auth', [AuthController::class, 'loginWithVerificationCode']);
+
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware('auth:api')->get('/CurrentUser', [AuthController::class, 'getCurrentUser']);
 
 Route::middleware('check.admin.creation')->group(function () {
     Route::prefix('users')->group(function () {

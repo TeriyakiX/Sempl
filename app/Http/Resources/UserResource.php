@@ -39,6 +39,7 @@ class UserResource extends JsonResource
             'full_address' => $this->full_address,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'phone' => $this->phone,
         ];
     }
 }
