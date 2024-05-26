@@ -286,4 +286,10 @@ class AuthController extends Controller
             'message' => 'User logged in successfully.'
         ], 200);
     }
+
+    public function getTokenTTL()
+    {
+        $ttl = JWTAuth::factory()->getTTL();
+        return response()->json(['token_ttl' => $ttl], 200);
+    }
 }

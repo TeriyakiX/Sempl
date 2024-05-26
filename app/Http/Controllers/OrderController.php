@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Resources\OrderResource;
+use App\Http\Resources\SampleRequestResource;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class OrderController extends Controller
 
@@ -57,5 +59,32 @@ class OrderController extends Controller
     {
         $order->delete();
         return response()->json(['message' => 'Order deleted successfully'], 200);
+    }
+
+    public function userOrders(Request $request)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if (!$user) {
+                return response()->json(['error' => 'User not found'], 404);
+            }
+
+            $token = JWTAuth::getToken();
+            if (!$token) {
+                return response()->json(['error' => 'Unable to retrieve token'], 401);
+            }
+
+            $accessToken = JWTAuth::refresh($token);
+
+            $orders = $user->orders;
+
+            return response()->json([
+                'orders' => OrderResource::collection($orders),
+                'access_token' => $accessToken,
+            ], 200);
+        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+            return response()->json(['error' => 'Unable to authenticate user'], 401);
+        }
     }
 }
