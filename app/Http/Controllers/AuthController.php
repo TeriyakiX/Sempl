@@ -23,7 +23,6 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         try {
-            JWTAuth::factory()->setTTL(43200);
             if (! $token = JWTAuth::attempt($credentials)) {
                 return response()->json(['error' => ''], 401);
             }
@@ -59,16 +58,33 @@ class AuthController extends Controller
             return response()->json(['error' => $validator->errors()], 400);
         }
 
-        $code = rand(10000, 99999);
         $phone = $request->input('phone');
 
-        $userForSMS = User::create([
-            'phone' => $phone,
-            'verification_code' => $code,
-            'code_sent_at' => Carbon::now()
-        ]);
+        $user = User::where('phone', $phone)->first();
 
-        Log::info('Created user for SMS:', ['user' => $userForSMS]);
+        if ($user && $user->last_code_request_at && Carbon::parse($user->last_code_request_at)->addMinute()->isFuture()) {
+            return response()->json(['error' => 'Please wait before requesting a new code.'], 429);
+        }
+
+        $code = rand(10000, 99999);
+
+        if (!$user) {
+            $user = User::create([
+                'phone' => $phone,
+                'verification_code' => $code,
+                'code_sent_at' => Carbon::now(),
+                'verification_attempts' => 0,
+                'last_code_request_at' => Carbon::now()
+            ]);
+        } else {
+            $user->verification_code = $code;
+            $user->code_sent_at = Carbon::now();
+            $user->verification_attempts = 0;
+            $user->last_code_request_at = Carbon::now();
+            $user->save();
+        }
+
+        Log::info('Created user for SMS:', ['user' => $user]);
 
         $systemCode = config('app.system_code');
 
@@ -99,10 +115,10 @@ class AuthController extends Controller
             return response()->json(['error' => 'Failed to send verification code.'], 500);
         }
     }
-    public function completeRegistration(Request $request)
+    public function verifyCode(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'phone' => 'required|numeric',
+            'phone' => 'required|regex:/^\d{11}$/',
             'verification_code' => 'required|numeric',
         ]);
 
@@ -111,28 +127,37 @@ class AuthController extends Controller
         }
 
         $phone = $request->input('phone');
-        $code = $request->input('verification_code');
+        $code = (int) $request->input('verification_code');
 
-        $systemCode = config('app.system_code');
+        $user = User::where('phone', $phone)->first();
 
-        if ($code !== $systemCode) {
-            $user = User::where('phone', $phone)
-                ->where('verification_code', $code)
-                ->first();
-
-            if (!$user) {
-                return response()->json(['error' => 'Invalid verification code or phone number.'], 400);
-            }
-        } else {
-            $user = User::where('phone', $phone)->first();
-
-            if (!$user) {
-                return response()->json(['error' => 'User not found.'], 400);
-            }
+        if (!$user || $user->verification_attempts >= 5 ||
+            ($user->verification_code !== $code &&
+                $code !== (int)config('app.system_code'))) {
+            return response()->json(['error' => 'Invalid verification code or phone number.'], 400);
         }
 
         if (Carbon::parse($user->code_sent_at)->addMinutes(5)->isPast()) {
             return response()->json(['error' => 'Verification code expired.'], 400);
+        }
+
+        $user->verification_attempts = 0;
+        $user->save();
+
+        $token = JWTAuth::fromUser($user);
+
+        return response()->json([
+            'message' => 'Verification code is valid.',
+            'access_token' => $token
+        ], 200);
+    }
+    public function completeRegistration(UserRequest $request)
+    {
+        // Получаем текущего пользователя из токена
+        $user = JWTAuth::parseToken()->authenticate();
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found.'], 404);
         }
 
         $user->fill($request->only([
@@ -154,35 +179,10 @@ class AuthController extends Controller
         $token = JWTAuth::fromUser($user);
 
         return response()->json([
-            'access_token' => $token,
             'user' => $user,
-            'message' => 'Registration completed successfully.'
+            'access_token' => $token,
+            'message' => 'Registration completed successfully. User logged in.',
         ], 200);
-    }
-
-    public function getCurrentUser(Request $request)
-    {
-        try {
-            $user = JWTAuth::parseToken()->authenticate();
-
-            if (!$user) {
-                return response()->json(['error' => 'User not found'], 404);
-            }
-
-            $token = JWTAuth::getToken();
-            if (!$token) {
-                return response()->json(['error' => 'Unable to retrieve token'], 401);
-            }
-
-            $accessToken = JWTAuth::refresh($token);
-
-            return response()->json([
-                'user' => $user,
-                'access_token' => $accessToken,
-            ], 200);
-        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
-            return response()->json(['error' => 'Unable to authenticate user'], 401);
-        }
     }
 
     public function sendVerificationCodeAuth(Request $request)

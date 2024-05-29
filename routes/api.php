@@ -12,6 +12,7 @@ use App\Http\Controllers\ProductController;
 
 Route::prefix('auth')->group(function () {
     Route::post('/send-code', [AuthController::class, 'sendVerificationCode']);
+    Route::post('/verify-code', [AuthController::class, 'verifyCode']);
     Route::post('/verify-code-and-register', [AuthController::class, 'completeRegistration']);
     Route::post('/send-code-auth', [AuthController::class, 'sendVerificationCodeAuth']);
     Route::post('/verify-code-and-auth', [AuthController::class, 'loginWithVerificationCode']);

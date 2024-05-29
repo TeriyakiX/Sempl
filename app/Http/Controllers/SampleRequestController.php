@@ -22,7 +22,6 @@ class SampleRequestController extends Controller
     {
         $product = Product::findOrFail($request->product_id);
 
-        // Проверка, что продукт принадлежит к категории "образец"
         if ($product->category_id !== 1) {
             return response()->json(['error' => 'Запрос на образец можно сделать только для продуктов категории "образец"'], 400);
         }
@@ -51,7 +50,6 @@ class SampleRequestController extends Controller
         if (isset($sampleRequestData['product_id'])) {
             $product = Product::findOrFail($sampleRequestData['product_id']);
 
-            // Проверка, что продукт принадлежит к категории "образец"
             if ($product->category->name !== 'образец') {
                 return response()->json(['error' => 'Запрос на образец можно сделать только для продуктов категории "образец"'], 400);
             }

@@ -8,7 +8,7 @@ class CreateSampleRequest extends FormRequest
 {
     public function authorize()
     {
-        return true; // Убедитесь, что эта функция возвращает true, если пользователь должен иметь доступ к этому запросу
+        return true;
     }
 
     public function rules()
