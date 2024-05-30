@@ -292,4 +292,29 @@ class AuthController extends Controller
         $ttl = JWTAuth::factory()->getTTL();
         return response()->json(['token_ttl' => $ttl], 200);
     }
+
+    public function getCurrentUser(Request $request)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if (!$user) {
+                return response()->json(['error' => 'User not found'], 404);
+            }
+
+            $token = JWTAuth::getToken();
+            if (!$token) {
+                return response()->json(['error' => 'Unable to retrieve token'], 401);
+            }
+
+            $accessToken = JWTAuth::refresh($token);
+
+            return response()->json([
+                'user' => $user,
+                'access_token' => $accessToken,
+            ], 200);
+        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+            return response()->json(['error' => 'Unable to authenticate user'], 401);
+        }
+    }
 }
