@@ -15,6 +15,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 class AuthController extends Controller
 {
@@ -74,7 +75,10 @@ class AuthController extends Controller
                 'verification_code' => $code,
                 'code_sent_at' => Carbon::now(),
                 'verification_attempts' => 0,
-                'last_code_request_at' => Carbon::now()
+                'last_code_request_at' => Carbon::now(),
+                'email' => Str::random(10).'@example.com',
+                'login' => Str::random(8),
+
             ]);
         } else {
             $user->verification_code = $code;

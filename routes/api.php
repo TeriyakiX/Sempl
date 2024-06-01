@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SampleRequestController;
+use App\Http\Controllers\TestedProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -54,7 +56,10 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::prefix('products')->group(function () {
         Route::get('/index', [ProductController::class, 'index']);
+        Route::get('/tested-products', [ProductController::class, 'getTestedProducts']);
         Route::get('/{product}/show', [ProductController::class, 'show']);
+        Route::post('/{product}/like', [ProductController::class, 'like']);
+        Route::post('/{product}/dislike', [ProductController::class, 'dislike']);
         Route::get('/{product}/reviews', [ProductController::class, 'getProductReviews']);
     });
 
@@ -76,6 +81,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/index', [ReviewController::class, 'index']);
         Route::post('/create', [ReviewController::class, 'store']);
         Route::get('/{review}', [ReviewController::class, 'show']);
+        Route::post('/{review}/like', [ReviewController::class, 'like']);
+        Route::post('/{review}/dislike', [ReviewController::class, 'dislike']);
         Route::put('/{review}/update', [ReviewController::class, 'update']);
         Route::delete('/{review}/delete', [ReviewController::class, 'destroy']);
         Route::post('/{review}/media/upload', [ReviewController::class, 'uploadMedia'])->name('reviews.media.upload');
@@ -85,14 +92,23 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/', [SampleRequestController::class, 'index']);
         Route::post('/', [SampleRequestController::class, 'store']);
         Route::get('/userSamples', [SampleRequestController::class, 'userSamples']);
+        Route::put('/update-delivery-status', [SampleRequestController::class, 'updateDeliveryStatusForExpiredOrders']);
         Route::get('/{sampleRequest}', [SampleRequestController::class, 'show']);
         Route::put('/{sampleRequest}', [SampleRequestController::class, 'update']);
         Route::delete('/{sampleRequest}', [SampleRequestController::class, 'destroy']);
     });
 
-
+    Route::prefix('questions')->group(function () {
+        Route::get('/', [QuestionController::class, 'index']);
+        Route::post('/', [QuestionController::class, 'store']);
+        Route::get('/{question}', [QuestionController::class, 'show']);
+        Route::put('/{question}', [QuestionController::class, 'update']);
+        Route::delete('/{question}', [QuestionController::class, 'destroy']);
+    });
 
     Route::get('/token-ttl', [AuthController::class, 'getTokenTTL']);
 
+    Route::get('sample-requests/expected', [SampleRequestController::class, 'expectedSamples']);
+    Route::get('sample-requests/completed', [SampleRequestController::class, 'completedSamples']);
 
 });

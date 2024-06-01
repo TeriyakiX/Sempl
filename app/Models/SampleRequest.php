@@ -10,7 +10,12 @@ class SampleRequest extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'accepted_terms', 'question1', 'question2', 'question3', 'question4', 'product_id'
+        'user_id', 'accepted_terms', 'product_id', 'delivery_status_id' , 'delivery_date' , 'created_at', 'updated_at'
+    ];
+    protected $dates = [
+        'delivery_date',
+        'created_at',
+        'updated_at',
     ];
 
     public function user()
@@ -22,4 +27,16 @@ class SampleRequest extends Model
     {
         return $this->belongsTo(Product::class);
     }
+    public function questions()
+    {
+        return $this->belongsToMany(Question::class, 'sample_request_question')
+            ->withPivot('answer')
+            ->withTimestamps();
+    }
+    public function deliveryStatus()
+    {
+        return $this->belongsTo(DeliveryStatus::class);
+    }
+
+
 }

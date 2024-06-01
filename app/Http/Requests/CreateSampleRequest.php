@@ -14,12 +14,21 @@ class CreateSampleRequest extends FormRequest
     public function rules()
     {
         return [
-            'accepted_terms' => 'required|boolean',
-            'question1' => 'required|string',
-            'question2' => 'required|string',
-            'question3' => 'required|string',
-            'question4' => 'required|string',
             'product_id' => 'required|exists:products,id',
+            'accepted_terms' => 'required|boolean',
+            'questions' => 'required|array',
+            'questions.*.question_id' => 'required|exists:questions,id',
+            'questions.*.answer' => 'required|string'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'questions.required' => 'Вопросы обязательны для заполнения.',
+            'questions.*.question_id.required' => 'ID вопроса обязателен.',
+            'questions.*.question_id.exists' => 'ID вопроса должен существовать в базе данных.',
+            'questions.*.answer.required' => 'Ответ на вопрос обязателен.'
         ];
     }
 }

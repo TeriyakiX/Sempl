@@ -14,12 +14,21 @@ class UpdateSampleRequest extends FormRequest
     public function rules()
     {
         return [
-            'accepted_terms' => 'sometimes|boolean',
-            'question1' => 'sometimes|string',
-            'question2' => 'sometimes|string',
-            'question3' => 'sometimes|string',
-            'question4' => 'sometimes|string',
-            'product_id' => 'sometimes|exists:products,id',
+            'product_id' => 'sometimes|required|exists:products,id',
+            'accepted_terms' => 'sometimes|required|boolean',
+            'questions' => 'sometimes|required|array',
+            'questions.*.question_id' => 'required_with:questions|exists:questions,id',
+            'questions.*.answer' => 'required_with:questions|string'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'questions.sometimes' => 'Вопросы обязательны для заполнения.',
+            'questions.*.question_id.required_with' => 'ID вопроса обязателен.',
+            'questions.*.question_id.exists' => 'ID вопроса должен существовать в базе данных.',
+            'questions.*.answer.required_with' => 'Ответ на вопрос обязателен.'
         ];
     }
 }

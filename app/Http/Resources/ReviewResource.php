@@ -19,6 +19,10 @@ class ReviewResource extends JsonResource
             'pros' => $this->pros,
             'cons' => $this->cons,
             'media' => $this->media,
+            'likes_count' => $this->likes_count,
+            'dislikes_count' => $this->dislikes_count,
+            'user_has_liked' => $this->hasLiked(auth()->user()),
+            'user_has_disliked' => $this->hasDisliked(auth()->user()),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

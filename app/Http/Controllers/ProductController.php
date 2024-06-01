@@ -7,6 +7,7 @@ use App\Http\Resources\ReviewResource;
 use App\Models\Product;
 use App\Http\Resources\ProductResource;
 use App\Http\Requests\CreateProductRequest;
+use App\Models\ProductUserLike;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -45,6 +46,62 @@ class ProductController extends Controller
         $reviews = $product->reviews()->paginate($perPage);
 
         return ReviewResource::collection($reviews);
+    }
+
+    public function getTestedProducts(Request $request)
+    {
+        $user = auth()->user();
+        $testedProducts = Product::whereHas('reviews', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->where('is_tested', true)->get();
+
+        return ProductResource::collection($testedProducts);
+    }
+
+    public function like(Product $product)
+    {
+        $user = auth()->user();
+        $existingLike = $product->userLikes()->where('user_id', $user->id)->first();
+
+        if ($existingLike) {
+            if ($existingLike->like) {
+                return response()->json(['error' => 'You have already liked this product.'], 400);
+            } else {
+                $existingLike->like = true;
+                $existingLike->save();
+            }
+        } else {
+            ProductUserLike::create([
+                'product_id' => $product->id,
+                'user_id' => $user->id,
+                'like' => true
+            ]);
+        }
+
+        return response()->json(['message' => 'Product liked successfully.']);
+    }
+
+    public function dislike(Product $product)
+    {
+        $user = auth()->user();
+        $existingLike = $product->userLikes()->where('user_id', $user->id)->first();
+
+        if ($existingLike) {
+            if (!$existingLike->like) {
+                return response()->json(['error' => 'You have already disliked this product.'], 400);
+            } else {
+                $existingLike->like = false;
+                $existingLike->save();
+            }
+        } else {
+            ProductUserLike::create([
+                'product_id' => $product->id,
+                'user_id' => $user->id,
+                'like' => false
+            ]);
+        }
+
+        return response()->json(['message' => 'Product disliked successfully.']);
     }
 
 }

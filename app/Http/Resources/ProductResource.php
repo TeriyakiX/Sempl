@@ -10,6 +10,7 @@ class ProductResource extends JsonResource
     public function toArray($request)
     {
         $category = $this->category;
+        $subcategory = null;
 
         if ($category) {
             $mainCategory = $category->parent;
@@ -17,12 +18,7 @@ class ProductResource extends JsonResource
             if ($mainCategory) {
                 $subcategory = $category;
                 $category = $mainCategory;
-            } else {
-                $subcategory = null;
             }
-        } else {
-            $category = null;
-            $subcategory = null;
         }
 
         return [
@@ -32,6 +28,8 @@ class ProductResource extends JsonResource
             'photo' => $this->photo,
             'category' => $category ? new CategoryResource($category) : null,
             'subcategory' => $subcategory ? new CategoryResource($subcategory) : null,
+            'likes' => $this->likesCount(),
+            'dislikes' => $this->dislikesCount(),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
