@@ -173,7 +173,7 @@ class AuthController extends Controller
 
         if (!$user->profile_photo) {
             // Если нет, устанавливаем ссылку на дефолтное изображение
-            $user->profile_photo = 'https://get.wallhere.com/photo/4000x3004-px-ART-face-geisha-hair-makeup-mood-painting-profile-shoulders-smoke-805879.jpg';
+            $user->profile_photo = 'https://media.discordapp.net/attachments/852850059040784429/1255963796393164871/image.png?ex=667f0aef&is=667db96f&hm=2b3369b086c3d03edef7f53333bacf9ae938882ad751be5df6321aea3e3c2ee9&=&format=webp&quality=lossless';
         }
 
         if ($request->filled('password')) {
