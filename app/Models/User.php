@@ -79,7 +79,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function setProfilePhotoAttribute($value)
     {
-        $defaultPhotoUrl = 'https://pristor.ru/wp-content/uploads/2023/11/Новые-аниме-девушки-фото-на-аву-13.jpg';
+        $defaultPhotoUrl = 'https://yobte.ru/uploads/posts/2019-11/krasivye-devushki-v-ochkah-78-foto-27.jpg';
         $this->attributes['profile_photo'] = $value ?: $defaultPhotoUrl;
     }
 
