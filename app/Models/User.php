@@ -72,5 +72,16 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(TestedProduct::class);
     }
 
+    public function cart()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    public function setProfilePhotoAttribute($value)
+    {
+        $defaultPhotoUrl = 'https://pristor.ru/wp-content/uploads/2023/11/Новые-аниме-девушки-фото-на-аву-13.jpg';
+        $this->attributes['profile_photo'] = $value ?: $defaultPhotoUrl;
+    }
+
 
 }

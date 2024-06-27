@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Resources\ProductResource;
 use App\Models\Category;
 use App\Http\Resources\CategoryResource;
 use App\Http\Requests\CreateCategoryRequest;
+use App\Models\Product;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
@@ -50,4 +53,16 @@ class CategoryController extends Controller
         $category->delete();
         return response()->json(['message' => 'Category deleted successfully'], 200);
     }
+
+    public function searchProductsByCategories(Request $request)
+    {
+        $categoryIds = $request->input('category_ids');
+
+        $products = Product::whereHas('category', function ($query) use ($categoryIds) {
+            $query->whereIn('id', $categoryIds);
+        })->get();
+
+        return ProductResource::collection($products);
+    }
+
 }

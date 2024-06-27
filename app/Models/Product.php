@@ -69,4 +69,9 @@ class Product extends Model
     {
         return $this->hasMany(DeliveryStatus::class);
     }
+
+    public function cart()
+    {
+        return $this->hasMany(Cart::class);
+    }
 }

@@ -15,7 +15,6 @@ class UserRequest extends FormRequest
     {
         return [
             'login' => 'required|unique:users',
-            'password' => 'required',
             'first_name' => 'required',
             'last_name' => 'required',
             'gender' => 'required',
@@ -30,7 +29,6 @@ class UserRequest extends FormRequest
             'percentage_spent_on_cosmetics' => 'nullable|numeric',
             'vk_profile' => 'nullable|string',
             'telegram_profile' => 'nullable|string',
-            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'delivery_address' => 'required',
             'city' => 'required',
             'street' => 'required',

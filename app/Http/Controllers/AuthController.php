@@ -157,7 +157,6 @@ class AuthController extends Controller
     }
     public function completeRegistration(UserRequest $request)
     {
-        // Получаем текущего пользователя из токена
         $user = JWTAuth::parseToken()->authenticate();
 
         if (!$user) {
@@ -171,6 +170,11 @@ class AuthController extends Controller
             'profile_photo', 'delivery_address', 'city', 'street', 'house_number',
             'apartment_number', 'entrance', 'postal_code', 'want_advertising', 'accept_policy'
         ]));
+
+        if (!$user->profile_photo) {
+            // Если нет, устанавливаем ссылку на дефолтное изображение
+            $user->profile_photo = 'https://get.wallhere.com/photo/4000x3004-px-ART-face-geisha-hair-makeup-mood-painting-profile-shoulders-smoke-805879.jpg';
+        }
 
         if ($request->filled('password')) {
             $user->password = bcrypt($request->input('password'));

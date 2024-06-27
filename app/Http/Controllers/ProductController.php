@@ -20,9 +20,29 @@ class ProductController extends Controller
 
     public function create(CreateProductRequest $request)
     {
-        $product = Product::create($request->validated());
+        $validated = $request->validated();
+
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $photoName = $photo->getClientOriginalName();
+            $photoPath = $photo->storeAs('products', $photoName, 'public');
+            $validated['photo'] = $photoName;
+        } else {
+            $defaultImages = [
+                'https://cdn.discordapp.com/attachments/956148678475776000/1251191124794540074/image.png?ex=666dae0a&is=666c5c8a&hm=ead55e6019a94a5174cd149cb4a0b41e02a03d0b3688868e04d605cf3b00c616&',
+                'https://cdn.discordapp.com/attachments/956148678475776000/1251191370673033359/image.png?ex=666dae44&is=666c5cc4&hm=a8dfea379f6fe448d8049ce0525b8724809583251efd524cd3b54c4ed53d7e92&',
+                'https://cdn.discordapp.com/attachments/956148678475776000/1251191508766425129/image.png?ex=666dae65&is=666c5ce5&hm=879a805f560cd378ad539c4f52dda3b8f732654318e33197e8931508323090a0&'
+            ];
+
+            $randomIndex = array_rand($defaultImages);
+            $validated['photo'] = $defaultImages[$randomIndex];
+        }
+
+        $product = Product::create($validated);
+
         return new ProductResource($product);
     }
+
     public function show(Product $product)
     {
         return new ProductResource($product);

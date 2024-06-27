@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::view('/upload-image', 'create_product'); // Ваш маршрут для отображения формы
+
+Route::post('/upload-photo', [UserController::class, 'uploadPhoto'])->name('upload.photo'); // Маршрут для обработки загрузки фотографии

@@ -10,15 +10,17 @@ class CreateProductRequest extends FormRequest
     {
         return true;
     }
+
     public function rules()
     {
         return [
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'photo' => 'nullable|string|max:255',
+            'photo' => 'nullable|max:2048',
             'category_id' => 'required|exists:categories,id',
         ];
     }
+
     public function messages()
     {
         return [
@@ -27,8 +29,7 @@ class CreateProductRequest extends FormRequest
             'name.max' => 'Поле :attribute не должно превышать :max символов.',
             'description.required' => 'Поле :attribute является обязательным.',
             'description.string' => 'Поле :attribute должно быть строкой.',
-            'photo.string' => 'Поле :attribute должно быть строкой.',
-            'photo.max' => 'Поле :attribute не должно превышать :max символов.',
+            'photo.max' => 'Поле :attribute не должно превышать :max килобайт.',
             'category_id.required' => 'Поле :attribute является обязательным.',
             'category_id.exists' => 'Выбранная :attribute не существует.',
         ];
@@ -43,6 +44,4 @@ class CreateProductRequest extends FormRequest
             'category_id' => 'категория',
         ];
     }
-
-
 }
