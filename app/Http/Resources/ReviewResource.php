@@ -7,22 +7,27 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ReviewResource extends JsonResource
 {
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
     public function toArray($request)
     {
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
-            'user_name' => $this->user->login,
             'product_id' => $this->product_id,
+            'question_1' => $this->question_1,
+            'question_2' => $this->question_2,
+            'question_3' => $this->question_3,
+            'description' => $this->description,
+            'pro_1' => $this->pro_1,
+            'pro_2' => $this->pro_2,
+            'con_1' => $this->con_1,
+            'con_2' => $this->con_2,
+            'photos' => $this->photos ? json_decode($this->photos, true) : [],
             'rating' => $this->rating,
-            'comment' => $this->comment,
-            'pros' => $this->pros,
-            'cons' => $this->cons,
-            'media' => $this->media,
-            'likes_count' => $this->likes_count,
-            'dislikes_count' => $this->dislikes_count,
-            'user_has_liked' => $this->hasLiked(auth()->user()),
-            'user_has_disliked' => $this->hasDisliked(auth()->user()),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

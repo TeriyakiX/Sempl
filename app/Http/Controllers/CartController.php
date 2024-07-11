@@ -26,7 +26,7 @@ class CartController extends Controller
 
         $user->cart()->create(['product_id' => $product->id]);
 
-        return response()->json(['message' => 'Product added to cart successfully.'], 200);
+        return response()->json(['message' => 'Продукт добавлен в корзину.'], 200);
     }
 
     public function removeFromCart($id)
@@ -43,6 +43,10 @@ class CartController extends Controller
     {
         $user = $this->jwtAuth->parseToken()->authenticate();
         $cartItems = $user->cart()->with('product')->get();
+
+        if ($cartItems->isEmpty()) {
+            return response()->json(['message' => 'Ваша корзина пуста.'], 200);
+        }
 
         $result = $cartItems->map(function ($cartItem) {
             return [
@@ -102,6 +106,7 @@ class CartController extends Controller
             return response()->json(['error' => 'Cart is empty.'], 400);
         }
 
+        // Создаем заказ
         $purchase = Purchase::create([
             'user_id' => $user->id,
             'delivery_address' => $request->input('delivery_address'),
@@ -113,11 +118,18 @@ class CartController extends Controller
             'postal_code' => $request->input('postal_code'),
         ]);
 
-        $productIds = $cartItems->pluck('product_id');
+        // Получаем идентификаторы всех товаров из корзины
+        $productIds = $cartItems->pluck('product_id')->toArray();
+
+        // Связываем товары с заказом
         $purchase->products()->attach($productIds);
 
+        // Очищаем корзину пользователя
         $user->cart()->delete();
 
-        return response()->json(['message' => 'Purchase created successfully.'], 200);
+        // Обновляем статусы товаров в заказе на 'ожидает'
+        Product::whereIn('id', $productIds)->update(['expected' => true]);
+
+        return response()->json(['message' => 'Ваш заказ создан, ожидайте обратной связи.'], 200);
     }
 }

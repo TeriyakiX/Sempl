@@ -77,11 +77,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Cart::class);
     }
 
-    public function setProfilePhotoAttribute($value)
+    public function purchases()
     {
-        $defaultPhotoUrl = 'https://yobte.ru/uploads/posts/2019-11/krasivye-devushki-v-ochkah-78-foto-27.jpg';
-        $this->attributes['profile_photo'] = $value ?: $defaultPhotoUrl;
+        return $this->hasMany(Purchase::class);
     }
+
 
 
 }

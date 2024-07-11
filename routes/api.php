@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\QuestionController;
@@ -24,7 +25,7 @@ use App\Http\Controllers\ProductController;
     Route::middleware(['auth:api', 'admin'])->group(function () {
         Route::prefix('products')->group(function () {
             Route::post('/create', [ProductController::class, 'create']); // Create a new product
-            Route::put('/{product}/update', [ProductController::class, 'update']); // Update a product
+            Route::post('/{product}/update', [ProductController::class, 'update']); // Update a product
             Route::delete('/{product}/delete', [ProductController::class, 'destroy']); // Delete a product
         });
 
@@ -53,7 +54,8 @@ use App\Http\Controllers\ProductController;
             Route::put('/{id}/update', [UserController::class, 'update']); // Update user by ID
             Route::put('/{id}/profile', [UserController::class, 'profile']); // Update user profile
             Route::delete('/{id}/delete', [UserController::class, 'destroy']); // Delete user by ID
-            Route::put('/profile', [UserController::class, 'updateProfile']); // Update current user profile
+            Route::post('/profile', [UserController::class, 'updateProfile']); // Update current user profile
+            Route::get('/orders', [UserController::class, 'userOrders']); // Get user orders
         });
 
         Route::prefix('products')->group(function () {
@@ -121,4 +123,9 @@ use App\Http\Controllers\ProductController;
             Route::post('/checkout', [CartController::class, 'checkout']); // Checkout
         });
 
+
+        Route::get('/admin/orders', [AdminController::class, 'index']);
+        Route::put('/admin/orders/{purchase}', [AdminController::class, 'updateStatus']);
+
     });
+

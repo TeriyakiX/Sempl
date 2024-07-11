@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -165,15 +166,24 @@ class AuthController extends Controller
 
         $user->fill($request->only([
             'login', 'first_name', 'last_name', 'gender', 'birthdate', 'app_name',
-            'email', 'password', 'address', 'people_living_with', 'has_children', 'pets',
+            'email', 'address', 'people_living_with', 'has_children', 'pets',
             'average_monthly_income', 'percentage_spent_on_cosmetics', 'vk_profile', 'telegram_profile',
-            'profile_photo', 'delivery_address', 'city', 'street', 'house_number',
+            'delivery_address', 'city', 'street', 'house_number',
             'apartment_number', 'entrance', 'postal_code', 'want_advertising', 'accept_policy'
         ]));
 
-        if (!$user->profile_photo) {
-            // Если нет, устанавливаем ссылку на дефолтное изображение
-            $user->profile_photo = 'https://media.discordapp.net/attachments/852850059040784429/1255963796393164871/image.png?ex=667f0aef&is=667db96f&hm=2b3369b086c3d03edef7f53333bacf9ae938882ad751be5df6321aea3e3c2ee9&=&format=webp&quality=lossless';
+        // Если передан файл фотографии, сохраняем его
+        if ($request->hasFile('profile_photo')) {
+            $photo = $request->file('profile_photo');
+            $path = $photo->store('profile_photos', 'public');
+
+            // Удаляем старую фотографию, если она существует и не является URL
+            if ($user->profile_photo && !filter_var($user->profile_photo, FILTER_VALIDATE_URL)) {
+                Storage::disk('public')->delete($user->profile_photo);
+            }
+
+            // Сохраняем новый путь к фотографии в базе данных
+            $user->profile_photo = $path;
         }
 
         if ($request->filled('password')) {
@@ -187,7 +197,7 @@ class AuthController extends Controller
         $token = JWTAuth::fromUser($user);
 
         return response()->json([
-            'user' => $user,
+            'user' => new UserResource($user),
             'access_token' => $token,
             'message' => 'Registration completed successfully. User logged in.',
         ], 200);

@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreOrderRequest;
-use App\Http\Requests\StoreReviewRequest;
-use App\Models\Dislike;
-use App\Models\Like;
+use App\Http\Requests\ReviewRequest;
+use App\Http\Resources\ReviewResource;
 use App\Models\Review;
 use Illuminate\Http\Request;
-use App\Http\Resources\ReviewResource;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 
 class ReviewController extends Controller
 {
@@ -18,13 +17,33 @@ class ReviewController extends Controller
         return ReviewResource::collection($reviews);
     }
 
-    public function store(StoreReviewRequest $request)
+    public function store(ReviewRequest $request)
     {
-        $review = new Review();
-        $review->user_id = auth()->id();
-        $review->fill($request->validated());
-        $review->product->updateRating();
-        $review->save();
+        $user = JWTAuth::parseToken()->authenticate();
+
+        $review = Review::create([
+            'user_id' => $user->id,
+            'product_id' => $request->product_id,
+            'question_1' => $request->question_1,
+            'question_2' => $request->question_2,
+            'question_3' => $request->question_3,
+            'description' => $request->description,
+            'pro_1' => $request->pro_1,
+            'pro_2' => $request->pro_2,
+            'con_1' => $request->con_1,
+            'con_2' => $request->con_2,
+            'rating' => $request->rating,
+        ]);
+
+        if ($request->hasFile('photos')) {
+            $photos = [];
+            foreach ($request->file('photos') as $file) {
+                $path = $file->store('review_photos');
+                $photos[] = $path;
+            }
+            $review->photos = json_encode($photos);
+            $review->save();
+        }
 
         return new ReviewResource($review);
     }
@@ -34,79 +53,53 @@ class ReviewController extends Controller
         return new ReviewResource($review);
     }
 
-    public function update(Request $request, Review $review)
+    public function update(ReviewRequest $request, Review $review)
     {
-        $review->update($request->all());
+        $review->update($request->validated());
+
+        if ($request->hasFile('photos')) {
+            $photos = [];
+            foreach ($request->file('photos') as $file) {
+                $path = $file->store('review_photos');
+                $photos[] = $path;
+            }
+            $review->photos = json_encode($photos);
+            $review->save();
+        }
+
         return new ReviewResource($review);
     }
 
     public function destroy(Review $review)
     {
         $review->delete();
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 
-    public function uploadMedia(Request $request)
+    public function like(Review $review)
     {
-        $files = $request->file('media');
-        $paths = [];
-
-        foreach ($files as $file) {
-            $path = $file->store('reviews/media', 'public');
-            $paths[] = $path;
-        }
-
-        return response()->json(['paths' => $paths]);
+        $review->increment('likes');
+        return new ReviewResource($review);
     }
 
-    public function like(Request $request, Review $review)
+    public function dislike(Review $review)
     {
-        $user = $request->user();
-        if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
-        $existingLike = Like::where('user_id', $user->id)
-            ->where('review_id', $review->id)
-            ->first();
-
-        if ($existingLike) {
-            return response()->json(['message' => 'You already liked this review'], 400);
-        }
-
-        $like = new Like();
-        $like->user_id = $user->id;
-        $like->review_id = $review->id;
-        $like->save();
-
-        $review->updateLikesCount();
-
-        return response()->json(['message' => 'Review liked successfully'], 200);
+        $review->increment('dislikes');
+        return new ReviewResource($review);
     }
 
-    public function dislike(Request $request, Review $review)
+    public function uploadMedia(Request $request, Review $review)
     {
-        $user = $request->user();
-        if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        if ($request->hasFile('media')) {
+            $media = [];
+            foreach ($request->file('media') as $file) {
+                $path = $file->store('review_media');
+                $media[] = $path;
+            }
+            $review->media = json_encode($media);
+            $review->save();
         }
 
-        $existingLike = Like::where('user_id', $user->id)
-            ->where('review_id', $review->id)
-            ->first();
-
-        if ($existingLike) {
-            return response()->json(['message' => 'You already disliked this review'], 400);
-        }
-
-        $dislike = new Dislike();
-        $dislike->user_id = $user->id;
-        $dislike->review_id = $review->id;
-        $dislike->save();
-
-        $review->updateDislikesCount();
-
-        return response()->json(['message' => 'Review disliked successfully'], 200);
+        return new ReviewResource($review);
     }
-
 }

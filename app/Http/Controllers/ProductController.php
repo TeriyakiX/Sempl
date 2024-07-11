@@ -9,6 +9,7 @@ use App\Http\Resources\ProductResource;
 use App\Http\Requests\CreateProductRequest;
 use App\Models\ProductUserLike;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -26,7 +27,7 @@ class ProductController extends Controller
             $photo = $request->file('photo');
             $photoName = $photo->getClientOriginalName();
             $photoPath = $photo->storeAs('products', $photoName, 'public');
-            $validated['photo'] = $photoName;
+            $validated['photo'] = $photoPath;
         } else {
             $defaultImages = [
                 'https://cdn.discordapp.com/attachments/956148678475776000/1251191124794540074/image.png?ex=666dae0a&is=666c5c8a&hm=ead55e6019a94a5174cd149cb4a0b41e02a03d0b3688868e04d605cf3b00c616&',
@@ -50,7 +51,22 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request, Product $product)
     {
-        $product->update($request->validated());
+        $validated = $request->validated();
+
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $photoName = $photo->getClientOriginalName();
+            $photoPath = $photo->storeAs('products', $photoName, 'public');
+            $validated['photo'] = $photoPath;
+
+            // Удаляем старую фотографию, если она существует и не является URL
+            if (filter_var($product->photo, FILTER_VALIDATE_URL) === false && Storage::disk('public')->exists($product->photo)) {
+                Storage::disk('public')->delete($product->photo);
+            }
+        }
+
+        $product->update($validated);
+
         return new ProductResource($product);
     }
     public function destroy(Product $product)

@@ -16,7 +16,7 @@ class UpdateProductRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'photo' => 'nullable|string|max:255',
+            'profile_photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category_id' => 'required|exists:categories,id',
         ];
     }

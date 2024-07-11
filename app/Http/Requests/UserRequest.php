@@ -10,7 +10,18 @@ class UserRequest extends FormRequest
     {
         return true;
     }
-
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'has_children' => filter_var($this->has_children, FILTER_VALIDATE_BOOLEAN),
+        ]);
+        $this->merge([
+            'want_advertising' => filter_var($this->want_advertising, FILTER_VALIDATE_BOOLEAN),
+        ]);
+        $this->merge([
+            'accept_policy' => filter_var($this->accept_policy, FILTER_VALIDATE_BOOLEAN),
+        ]);
+    }
     public function rules()
     {
         return [

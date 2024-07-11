@@ -28,7 +28,7 @@ class UserResource extends JsonResource
             'percentage_spent_on_cosmetics' => $this->percentage_spent_on_cosmetics,
             'vk_profile' => $this->vk_profile,
             'telegram_profile' => $this->telegram_profile,
-            'profile_photo' => $this->profile_photo,
+            'profile_photo' => $this->when($this->profile_photo !== null, asset('storage/' . $this->profile_photo)),
             'delivery_address' => $this->delivery_address,
             'city' => $this->city,
             'street' => $this->street,

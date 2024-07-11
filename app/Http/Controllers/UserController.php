@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\JWTAuth;
 
@@ -41,22 +42,6 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
-    public function update(UserRequest $request, User $user)
-    {
-        $data = $request->validated();
-
-        if ($request->hasFile('profile_photo')) {
-            if ($user->profile_photo) {
-                Storage::disk('public')->delete($user->profile_photo);
-            }
-            $data['profile_photo'] = $request->file('profile_photo')->store('profile_photos', 'public');
-        }
-
-        $user->update($data);
-
-        return new UserResource($user);
-    }
-
     public function show(User $user)
     {
         return new UserResource($user);
@@ -82,29 +67,27 @@ class UserController extends Controller
 
     public function updateProfile(UpdateUserRequest $request)
     {
-        try {
-            $user = $this->jwtAuth->parseToken()->authenticate();
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Could not authenticate user'], 401);
-        }
+        // Получаем текущего пользователя через JWTAuth
+        $user = $this->jwtAuth->parseToken()->authenticate();
 
-        $data = $request->validated();
+        // Обновление полей профиля
+        $user->fill($request->validated());
 
-        if (isset($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        } else {
-            unset($data['password']);
-        }
-
+        // Обработка загрузки новой фотографии, если она есть
         if ($request->hasFile('profile_photo')) {
-            $file = $request->file('profile_photo');
-            $path = $file->store('profile_photos', 'public');
-            $data['profile_photo'] = $path;
-        } elseif (empty($data['profile_photo'])) {
-            $data['profile_photo'] = 'profile_photos/default.png';
+            $photo = $request->file('profile_photo');
+            $path = $photo->store('profile_photos', 'public'); // сохраняем фото в папку 'storage/app/public/profile_photos'
+
+            // Удаляем старую фотографию, если она существует
+            if ($user->profile_photo && $user->profile_photo != 'profile_photos/default.png') {
+                Storage::disk('public')->delete($user->profile_photo);
+            }
+
+            // Сохраняем новый путь к фотографии в базе данных
+            $user->profile_photo = $path;
         }
 
-        $user->update($data);
+        $user->save();
 
         return new UserResource($user);
     }
@@ -125,4 +108,36 @@ class UserController extends Controller
 
         return response()->json(['error' => 'No photo uploaded'], 400);
     }
+
+    public function UserOrders(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $userOrders = $user->purchases()->with('products')->get();
+
+        $pendingOrders = $userOrders->filter(function ($order) {
+            return $order->isPending();
+        });
+
+        $awaitingReviewOrders = $userOrders->filter(function ($order) {
+            return $order->isAwaitingReview();
+        });
+
+        $completedOrders = $userOrders->filter(function ($order) {
+            return $order->isCompleted();
+        });
+
+        return response()->json([
+            'pending_orders' => $pendingOrders,
+            'awaiting_review_orders' => $awaitingReviewOrders,
+            'completed_orders' => $completedOrders,
+            'message'    => 'User orders loaded successfully.'
+        ], 200);
+    }
+
+
 }
