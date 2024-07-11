@@ -54,7 +54,7 @@ use App\Http\Controllers\ProductController;
             Route::put('/{id}/update', [UserController::class, 'update']); // Update user by ID
             Route::put('/{id}/profile', [UserController::class, 'profile']); // Update user profile
             Route::delete('/{id}/delete', [UserController::class, 'destroy']); // Delete user by ID
-            Route::post('/profile', [UserController::class, 'updateProfile']); // Update current user profile
+            Route::post('/profile/update', [UserController::class, 'updateProfile']); // Update current user profile
             Route::get('/orders', [UserController::class, 'userOrders']); // Get user orders
         });
 
