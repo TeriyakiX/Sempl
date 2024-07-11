@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Purchase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\JWTAuth;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,14 +20,41 @@ class CartController extends Controller
 
     public function addToCart(Request $request)
     {
-        $user = $this->jwtAuth->parseToken()->authenticate();
-        $product = $this->findProduct($request->input('product_id'));
+        try {
+            // Аутентификация пользователя
+            $user = $this->jwtAuth->parseToken()->authenticate();
+            if (!$user) {
+                Log::info('Unauthorized request.');
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
 
-        $this->validateCart($user, $product);
+            // Отладочный вывод для проверки аутентификации
+            Log::info('Authenticated user:', ['user' => $user]);
 
-        $user->cart()->create(['product_id' => $product->id]);
+            // Проверка существования продукта
+            $product = $this->findProduct($request->input('product_id'));
+            if (!$product) {
+                Log::info('Product not found.', ['product_id' => $request->input('product_id')]);
+                return response()->json(['error' => 'Product not found.'], 404);
+            }
 
-        return response()->json(['message' => 'Продукт добавлен в корзину.'], 200);
+            // Отладочный вывод для проверки продукта
+            Log::info('Product found:', ['product' => $product]);
+
+            // Проверка корзины
+            $this->validateCart($user, $product);
+
+            // Добавление продукта в корзину
+            $user->cart()->create(['product_id' => $product->id]);
+
+            // Отладочный вывод для проверки корзины
+            Log::info('Product added to cart:', ['product' => $product]);
+
+            return response()->json(['message' => 'Продукт добавлен в корзину.'], 200);
+        } catch (\Exception $e) {
+            Log::error('Error adding product to cart:', ['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     public function removeFromCart($id)
