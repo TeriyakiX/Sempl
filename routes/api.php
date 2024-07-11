@@ -118,7 +118,7 @@ use App\Http\Controllers\ProductController;
 
         Route::prefix('cart')->group(function () {
             Route::get('/', [CartController::class, 'viewCart']); // View cart
-            Route::post('/', [CartController::class, 'addToCart']); // Add to cart
+            Route::post('/add', [CartController::class, 'addToCart']); // Add to cart
             Route::delete('/{id}', [CartController::class, 'removeFromCart']); // Remove from cart
             Route::post('/checkout', [CartController::class, 'checkout']); // Checkout
         });
