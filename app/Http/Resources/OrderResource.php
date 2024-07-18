@@ -13,7 +13,7 @@ class OrderResource extends JsonResource
             'id' => $this->id,
             'product_id' => $this->product_id,
             'delivery_status' => $this->delivery_status,
-            'photo' => $this->product->photo,
+            'photo' => $this->when($this->photo !== null, asset('storage/' . $this->photo)),
             'user_address' => $this->user->address,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

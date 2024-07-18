@@ -17,22 +17,25 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
+
+
     public function orders()
     {
         return $this->hasMany(Order::class);
     }
 
-    public function reviews()
+    public function feedbacks()
     {
-        return $this->hasMany(Review::class);
+        return $this->hasMany(ProductFeedback::class);
     }
+
     public function updateRating()
     {
-        $totalReviews = $this->reviews()->count();
-        $totalRating = $this->reviews()->sum('rating');
+        $totalFeedbacks = $this->feedbacks()->count();
+        $totalRating = $this->feedbacks()->sum('rating');
 
-        if ($totalReviews > 0) {
-            $averageRating = $totalRating / $totalReviews;
+        if ($totalFeedbacks > 0) {
+            $averageRating = $totalRating / $totalFeedbacks;
             $this->rating = $averageRating;
             $this->is_tested = true;
         } else {
@@ -79,4 +82,5 @@ class Product extends Model
     {
         return $this->belongsToMany(Purchase::class, 'product_purchase', 'product_id', 'purchase_id');
     }
+
 }

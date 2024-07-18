@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\Status\AwaitingReviewOrdersResource;
+use App\Http\Resources\Status\CompletedOrdersResource;
+use App\Http\Resources\Status\PendingOrdersResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -132,10 +135,10 @@ class UserController extends Controller
         });
 
         return response()->json([
-            'pending_orders' => $pendingOrders,
-            'awaiting_review_orders' => $awaitingReviewOrders,
-            'completed_orders' => $completedOrders,
-            'message'    => 'User orders loaded successfully.'
+            'pending_orders' => PendingOrdersResource::collection($pendingOrders),
+            'awaiting_review_orders' => AwaitingReviewOrdersResource::collection($awaitingReviewOrders),
+            'completed_orders' => CompletedOrdersResource::collection($completedOrders),
+            'message' => 'User orders loaded successfully.'
         ], 200);
     }
 

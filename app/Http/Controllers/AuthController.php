@@ -313,7 +313,6 @@ class AuthController extends Controller
 
     public function getCurrentUser(Request $request)
     {
-        try {
             $user = JWTAuth::parseToken()->authenticate();
 
             if (!$user) {
@@ -328,11 +327,8 @@ class AuthController extends Controller
             $accessToken = JWTAuth::refresh($token);
 
             return response()->json([
-                'user' => $user,
+                'user' => new UserResource($user),
                 'access_token' => $accessToken,
             ], 200);
-        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
-            return response()->json(['error' => 'Unable to authenticate user'], 401);
-        }
     }
 }

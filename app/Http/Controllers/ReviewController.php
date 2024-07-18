@@ -88,18 +88,4 @@ class ReviewController extends Controller
         return new ReviewResource($review);
     }
 
-    public function uploadMedia(Request $request, Review $review)
-    {
-        if ($request->hasFile('media')) {
-            $media = [];
-            foreach ($request->file('media') as $file) {
-                $path = $file->store('review_media');
-                $media[] = $path;
-            }
-            $review->media = json_encode($media);
-            $review->save();
-        }
-
-        return new ReviewResource($review);
-    }
 }

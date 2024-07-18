@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductFeedbackController;
 use App\Http\Controllers\ProductController;
 
     Route::prefix('auth')->group(function () {
@@ -64,7 +65,7 @@ use App\Http\Controllers\ProductController;
             Route::get('/{product}/show', [ProductController::class, 'show']); // Get product by ID
             Route::post('/{product}/like', [ProductController::class, 'like']); // Like a product
             Route::post('/{product}/dislike', [ProductController::class, 'dislike']); // Dislike a product
-            Route::get('/{product}/reviews', [ProductController::class, 'getProductReviews']); // Get product reviews
+            Route::get('/{product}/feedbacks', [ProductFeedbackController::class, 'getProductReviews']); // Get product feedbacks
         });
 
         Route::prefix('categories')->group(function () {
@@ -127,5 +128,28 @@ use App\Http\Controllers\ProductController;
         Route::get('/admin/orders', [AdminController::class, 'index']);
         Route::put('/admin/orders/{purchase}', [AdminController::class, 'updateStatus']);
 
+        Route::post('product-feedbacks/{product_feedback}/like', [ProductFeedbackController::class, 'like']);
+        Route::post('product-feedbacks/{product_feedback}/dislike', [ProductFeedbackController::class, 'dislike']);
+
+
+
+        Route::prefix('product-feedbacks')->group(function () {
+            Route::get('/', [ProductFeedbackController::class, 'index']); // Get all feedbacks
+            Route::post('/', [ProductFeedbackController::class, 'store']); // Create a new feedback
+            Route::get('/{product_feedback}', [ProductFeedbackController::class, 'show']); // Get feedback by ID
+            Route::post('/{product_feedback}/like', [ProductFeedbackController::class, 'like']); // Like a feedback
+            Route::post('/{product_feedback}/dislike', [ProductFeedbackController::class, 'dislike']); // Dislike a feedback
+            Route::put('/{product_feedback}/update', [ProductFeedbackController::class, 'update']); // Update feedback by ID
+            Route::delete('/{product_feedback}/delete', [ProductFeedbackController::class, 'destroy']); // Delete feedback by ID
+        });
+
+
+
+        Route::prefix('questions')->group(function () {
+            Route::get('/', [QuestionController::class, 'index']); // Получение всех вопросов
+            Route::post('/create', [QuestionController::class, 'store']); // Создание нового вопроса
+        });
+
+        Route::get('/product/{product}/feedback-questions', [ProductController::class, 'getFeedbackQuestions']); // Получение вопросов для отзыва о продукте
     });
 

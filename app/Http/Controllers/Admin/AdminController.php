@@ -28,9 +28,11 @@ class AdminController extends Controller
 
         // Обновляем статус заказа и дату доставки
         $purchase->status = $request->status;
+
         if ($request->has('delivery_date')) {
             $purchase->delivery_date = $request->delivery_date;
         }
+
         $purchase->save();
 
         return response()->json([
