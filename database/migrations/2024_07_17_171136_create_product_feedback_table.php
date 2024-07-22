@@ -12,9 +12,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('product_id');
-            $table->text('question_1');
-            $table->text('question_2');
-            $table->text('question_3');
             $table->text('description');
             $table->text('pro_1')->nullable();
             $table->text('pro_2')->nullable();
