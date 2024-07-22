@@ -13,7 +13,6 @@ class AdminUserSeeder extends Seeder
     {
         User::create([
             'login' => 'admin',
-            'password' => Hash::make('admin'),
             'first_name' => 'Admin',
             'last_name' => 'User',
             'gender' => 'male',
@@ -22,10 +21,11 @@ class AdminUserSeeder extends Seeder
             'email' => 'admin@example.com',
             'address' => '123 Admin St, Admin City',
             'role' => '1',
-            'has_children' => false,
-            'pets' => false,
-            'average_monthly_income' => 0,
-            'percentage_spent_on_cosmetics' => 0,
+            'people_living_with_id' => 3,
+            'has_children_id' => 6,
+            'pets_id' => 11,
+            'average_monthly_income_id' => 13,
+            'percentage_spent_on_cosmetics_id' => 16,
             'delivery_address' => '123 Admin St, Admin City',
             'city' => 'Admin City',
             'street' => '123 Admin St',
