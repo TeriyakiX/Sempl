@@ -6,7 +6,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Database\Factories\CategoryFactory;
 use Database\Factories\ProductFactory;
-use Database\Factories\UserFactory;
+
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -23,10 +23,8 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        User::factory(10)->create();
         $this->call(FeedbackSeeder::class);
         $this->call(CategoryFactory::class);
-        $this->call(UserFactory::class);
         $this->call(ProductFactory::class);
         $this->call(CategorySeeder::class);
         $this->call(AdminUserSeeder::class);
