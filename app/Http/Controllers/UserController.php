@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\OrderDetailResource;
 use App\Http\Resources\Status\AwaitingReviewOrdersResource;
 use App\Http\Resources\Status\CompletedOrdersResource;
 use App\Http\Resources\Status\PendingOrdersResource;
@@ -141,6 +142,23 @@ class UserController extends Controller
             'message' => 'User orders loaded successfully.'
         ], 200);
     }
+    public function userOrderDetail(Request $request, $orderId)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $order = $user->purchases()->with(['products', 'user'])->find($orderId);
+
+        if (!$order) {
+            return response()->json(['error' => 'Order not found'], 404);
+        }
+
+        return new OrderDetailResource($order);
+    }
+
 
 
 }

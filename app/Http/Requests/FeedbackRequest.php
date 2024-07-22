@@ -15,9 +15,9 @@ class FeedbackRequest extends FormRequest
     {
         return [
             'product_id' => 'required|exists:products,id',
-            'question_1' => 'required|string',
-            'question_2' => 'required|string',
-            'question_3' => 'required|string',
+            'fixed_question_1' => 'required|exists:feedback_answers,id',
+            'fixed_question_2' => 'required|exists:feedback_answers,id',
+            'fixed_question_3' => 'required|exists:feedback_answers,id',
             'description' => 'required|string',
             'pro_1' => 'nullable|string',
             'pro_2' => 'nullable|string',

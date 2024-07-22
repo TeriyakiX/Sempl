@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class FeedbackQuestion extends Model
+class RegistrationQuestion extends Model
 {
     use HasFactory;
 
@@ -13,10 +13,6 @@ class FeedbackQuestion extends Model
 
     public function answers()
     {
-        return $this->hasMany(FeedbackAnswer::class, 'question_id');
-    }
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
+        return $this->hasMany(RegistrationAnswer::class, 'question_id');
     }
 }

@@ -133,5 +133,40 @@ class ProductController extends Controller
         return response()->json(['message' => 'Product disliked successfully.']);
     }
 
+    // Метод для получения всех секретных продуктов
+    public function getSecretProducts()
+    {
+        $secretProducts = Product::where('is_secret', true)->get();
+        return ProductResource::collection($secretProducts);
+    }
+
+    // Метод для получения деталей конкретного секретного продукта
+    public function getSecretProductDetail($id)
+    {
+        $product = Product::where('is_secret', true)->findOrFail($id);
+        return new ProductResource($product);
+    }
+
+    // Метод для установки продукта как секретный
+    public function makeSecret($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->is_secret = true;
+        $product->save();
+
+        return response()->json(['message' => 'Product marked as secret successfully.']);
+    }
+
+    // Метод для снятия статуса секретного продукта
+    public function makeNotSecret($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->is_secret = false;
+        $product->save();
+
+        return response()->json(['message' => 'Product unmarked as secret successfully.']);
+    }
+
+
 
 }

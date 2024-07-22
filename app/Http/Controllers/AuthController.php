@@ -164,10 +164,13 @@ class AuthController extends Controller
             return response()->json(['error' => 'User not found.'], 404);
         }
 
+        // Заполняем поля пользователя, используя ID ответов
         $user->fill($request->only([
             'login', 'first_name', 'last_name', 'gender', 'birthdate', 'app_name',
-            'email', 'address', 'people_living_with', 'has_children', 'pets',
-            'average_monthly_income', 'percentage_spent_on_cosmetics', 'vk_profile', 'telegram_profile',
+            'email', 'address',
+            'people_living_with_id', 'has_children_id', 'pets_id',
+            'average_monthly_income_id', 'percentage_spent_on_cosmetics_id',
+            'vk_profile', 'telegram_profile',
             'delivery_address', 'city', 'street', 'house_number',
             'apartment_number', 'entrance', 'postal_code', 'want_advertising', 'accept_policy'
         ]));

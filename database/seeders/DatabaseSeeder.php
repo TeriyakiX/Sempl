@@ -21,5 +21,7 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         User::factory(10)->create();
+        $this->call(FeedbackSeeder::class);
+        $this->call(RegistrationQuestionsSeeder::class);
     }
 }

@@ -26,9 +26,9 @@ class ProductFeedbackController extends Controller
         $feedback = ProductFeedback::create([
             'user_id' => $user->id,
             'product_id' => $request->product_id,
-            'question_1' => $request->question_1,
-            'question_2' => $request->question_2,
-            'question_3' => $request->question_3,
+            'fixed_question_1' => $request->fixed_question_1,
+            'fixed_question_2' => $request->fixed_question_2,
+            'fixed_question_3' => $request->fixed_question_3,
             'description' => $request->description,
             'pro_1' => $request->pro_1,
             'pro_2' => $request->pro_2,
@@ -39,7 +39,6 @@ class ProductFeedbackController extends Controller
         ]);
 
         if ($request->hasFile('photos')) {
-
             $photo = $request->file('photos');
             $path = $photo->store('feedback_photos', 'public');
             $feedback->photos = $path;
@@ -48,6 +47,8 @@ class ProductFeedbackController extends Controller
 
         $product = Product::findOrFail($request->product_id);
         $product->updateRating();
+        $product = $feedback->product;
+        $product->updateFeedbackCount();
 
         return new FeedbackResource($feedback);
     }
@@ -80,16 +81,50 @@ class ProductFeedbackController extends Controller
         return response()->noContent();
     }
 
-    public function like(ProductFeedback $productFeedback)
+    public function like($id)
     {
-        $productFeedback->addLike();
-        return response()->json(['message' => 'Like added']);
+        $user = JWTAuth::parseToken()->authenticate();
+        $feedback = ProductFeedback::findOrFail($id);
+
+        if ($feedback->liked_by_user) {
+            $feedback->likes -= 1;
+            $feedback->liked_by_user = false;
+        } else {
+            $feedback->likes += 1;
+            $feedback->liked_by_user = true;
+
+            if ($feedback->disliked_by_user) {
+                $feedback->dislikes -= 1;
+                $feedback->disliked_by_user = false;
+            }
+        }
+
+        $feedback->save();
+
+        return response()->json(['feedback' => new FeedbackResource($feedback)], 200);
     }
 
-    public function dislike(ProductFeedback $productFeedback)
+    public function dislike($id)
     {
-        $productFeedback->addDislike();
-        return response()->json(['message' => 'Dislike added']);
+        $user = JWTAuth::parseToken()->authenticate();
+        $feedback = ProductFeedback::findOrFail($id);
+
+        if ($feedback->disliked_by_user) {
+            $feedback->dislikes -= 1;
+            $feedback->disliked_by_user = false;
+        } else {
+            $feedback->dislikes += 1;
+            $feedback->disliked_by_user = true;
+
+            if ($feedback->liked_by_user) {
+                $feedback->likes -= 1;
+                $feedback->liked_by_user = false;
+            }
+        }
+
+        $feedback->save();
+
+        return response()->json(['feedback' => new FeedbackResource($feedback)], 200);
     }
 
     public function getProductReviews(Request $request, $product)

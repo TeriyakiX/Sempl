@@ -12,9 +12,9 @@ class ProductFeedback extends Model
     protected $fillable = [
         'user_id',
         'product_id',
-        'question_1',
-        'question_2',
-        'question_3',
+        'fixed_question_1',
+        'fixed_question_2',
+        'fixed_question_3',
         'description',
         'pro_1',
         'pro_2',
@@ -26,6 +26,8 @@ class ProductFeedback extends Model
         'photos',
         'likes',
         'dislikes',
+        'liked_by_user',
+        'disliked_by_user'
     ];
 
     const STATUS_PENDING = 'pending';
@@ -92,5 +94,21 @@ class ProductFeedback extends Model
     public function isDisliked()
     {
         return $this->dislikes > 0;
+    }
+
+
+    public function fixedQuestion1()
+    {
+        return $this->belongsTo(FeedbackAnswer::class, 'fixed_question_1');
+    }
+
+    public function fixedQuestion2()
+    {
+        return $this->belongsTo(FeedbackAnswer::class, 'fixed_question_2');
+    }
+
+    public function fixedQuestion3()
+    {
+        return $this->belongsTo(FeedbackAnswer::class, 'fixed_question_3');
     }
 }

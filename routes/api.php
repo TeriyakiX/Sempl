@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\RegistrationQuestionController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SampleRequestController;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductFeedbackController;
+use \App\Http\Controllers\FeedbackQuestionController;
 use App\Http\Controllers\ProductController;
 
     Route::prefix('auth')->group(function () {
@@ -28,6 +30,8 @@ use App\Http\Controllers\ProductController;
             Route::post('/create', [ProductController::class, 'create']); // Create a new product
             Route::post('/{product}/update', [ProductController::class, 'update']); // Update a product
             Route::delete('/{product}/delete', [ProductController::class, 'destroy']); // Delete a product
+            Route::patch('/{id}/make-secret', [ProductController::class, 'makeSecret']); // Make a product secret
+            Route::patch('{id}/make-not-secret', [ProductController::class, 'makeNotSecret']); // Make a product not secret
         });
 
         Route::prefix('categories')->group(function () {
@@ -57,6 +61,7 @@ use App\Http\Controllers\ProductController;
             Route::delete('/{id}/delete', [UserController::class, 'destroy']); // Delete user by ID
             Route::post('/profile/update', [UserController::class, 'updateProfile']); // Update current user profile
             Route::get('/orders', [UserController::class, 'userOrders']); // Get user orders
+            Route::get('/orders/{order}', [UserController::class, 'userOrderDetail']); // Get user order details
         });
 
         Route::prefix('products')->group(function () {
@@ -66,6 +71,8 @@ use App\Http\Controllers\ProductController;
             Route::post('/{product}/like', [ProductController::class, 'like']); // Like a product
             Route::post('/{product}/dislike', [ProductController::class, 'dislike']); // Dislike a product
             Route::get('/{product}/feedbacks', [ProductFeedbackController::class, 'getProductReviews']); // Get product feedbacks
+            Route::get('//secret', [ProductController::class, 'getSecretProducts']); // Get all secret products
+            Route::get('/secret/{id}', [ProductController::class, 'getSecretProductDetail']); // Get secret product by ID
         });
 
         Route::prefix('categories')->group(function () {
@@ -81,17 +88,6 @@ use App\Http\Controllers\ProductController;
             Route::get('/{order}/show', [OrderController::class, 'show']); // Get order by ID
             Route::put('/{order}/update', [OrderController::class, 'update']); // Update order by ID
             Route::delete('/{order}/delete', [OrderController::class, 'destroy']); // Delete order by ID
-        });
-
-        Route::prefix('reviews')->group(function () {
-            Route::get('/index', [ReviewController::class, 'index']); // Get all reviews
-            Route::post('/create', [ReviewController::class, 'store']); // Create a new review
-            Route::get('/{review}', [ReviewController::class, 'show']); // Get review by ID
-            Route::post('/{review}/like', [ReviewController::class, 'like']); // Like a review
-            Route::post('/{review}/dislike', [ReviewController::class, 'dislike']); // Dislike a review
-            Route::put('/{review}/update', [ReviewController::class, 'update']); // Update review by ID
-            Route::delete('/{review}/delete', [ReviewController::class, 'destroy']); // Delete review by ID
-            Route::post('/{review}/media/upload', [ReviewController::class, 'uploadMedia'])->name('reviews.media.upload'); // Upload media for review
         });
 
         Route::prefix('sample-requests')->group(function () {
@@ -150,6 +146,11 @@ use App\Http\Controllers\ProductController;
             Route::post('/create', [QuestionController::class, 'store']); // Создание нового вопроса
         });
 
-        Route::get('/product/{product}/feedback-questions', [ProductController::class, 'getFeedbackQuestions']); // Получение вопросов для отзыва о продукте
+        Route::post('/feedback/question', [FeedbackQuestionController::class, 'createQuestion']); // Create a new Question
+        Route::post('/feedback/question/{id}/answer', [FeedbackQuestionController::class, 'createAnswer']); // Create a new Answer
+        Route::get('/feedback/questions', [FeedbackQuestionController::class, 'getQuestions']); // Get all Questions
+
+        Route::get('/registration-questions', [RegistrationQuestionController::class, 'index']); // Get all RegistrationQuestions
+
     });
 

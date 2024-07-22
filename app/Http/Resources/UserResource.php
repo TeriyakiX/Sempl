@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\RegistrationAnswer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -9,6 +10,12 @@ class UserResource extends JsonResource
 {
     public function toArray($request)
     {
+
+        $peopleLivingWith = RegistrationAnswer::find($this->people_living_with_id);
+        $hasChildren = RegistrationAnswer::find($this->has_children_id);
+        $pets = RegistrationAnswer::find($this->pets_id);
+        $averageMonthlyIncome = RegistrationAnswer::find($this->average_monthly_income_id);
+        $percentageSpentOnCosmetics = RegistrationAnswer::find($this->percentage_spent_on_cosmetics_id);
         return [
             'id' => $this->id,
             'login' => $this->login,
@@ -21,11 +28,11 @@ class UserResource extends JsonResource
             'role' => $this->role,
             'want_advertising' => $this->want_advertising,
             'accept_policy' => $this->accept_policy,
-            'people_living_with' => $this->people_living_with,
-            'has_children' => $this->has_children,
-            'pets' => $this->pets,
-            'average_monthly_income' => $this->average_monthly_income,
-            'percentage_spent_on_cosmetics' => $this->percentage_spent_on_cosmetics,
+            'people_living_with' => $peopleLivingWith ? $peopleLivingWith->answer : null,
+            'has_children' => $hasChildren ? $hasChildren->answer : null,
+            'pets' => $pets ? $pets->answer : null,
+            'average_monthly_income' => $averageMonthlyIncome ? $averageMonthlyIncome->answer : null,
+            'percentage_spent_on_cosmetics' => $percentageSpentOnCosmetics ? $percentageSpentOnCosmetics->answer : null,
             'vk_profile' => $this->vk_profile,
             'telegram_profile' => $this->telegram_profile,
             'profile_photo' => $this->when($this->profile_photo !== null, asset('storage/' . $this->profile_photo)),

@@ -10,11 +10,20 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'photo', 'category_id', 'is_tested', 'likes', 'dislikes','expected' ];
+    protected $fillable = ['name', 'description', 'photo', 'category_id', 'is_tested', 'likes', 'dislikes','expected', 'feedback_count', 'is_secret' ];
 
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+    public function feedbacks()
+    {
+        return $this->hasMany(ProductFeedback::class);
+    }
+    public function updateFeedbackCount()
+    {
+        $this->feedback_count = $this->feedbacks()->count();
+        $this->save();
     }
 
 
@@ -22,11 +31,6 @@ class Product extends Model
     public function orders()
     {
         return $this->hasMany(Order::class);
-    }
-
-    public function feedbacks()
-    {
-        return $this->hasMany(ProductFeedback::class);
     }
 
     public function updateRating()

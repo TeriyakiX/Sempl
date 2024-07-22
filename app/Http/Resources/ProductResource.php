@@ -31,6 +31,8 @@ class ProductResource extends JsonResource
             'rating' => $this->rating,
             'likes' => $this->likesCount(),
             'dislikes' => $this->dislikesCount(),
+            'feedback_count' => $this->feedback_count,
+            'is_secret' => $this->is_secret,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

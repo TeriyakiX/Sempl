@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use App\Models\Purchase;
 use Illuminate\Http\Request;
 class AdminController extends Controller
@@ -40,4 +41,6 @@ class AdminController extends Controller
             'message' => 'Order status and delivery date updated successfully.'
         ], 200);
     }
+
+
 }
