@@ -13,6 +13,7 @@ class AdminUserSeeder extends Seeder
     {
         User::create([
             'login' => 'admin',
+            'password' => Hash::make('admin'), // Устанавливаем пароль
             'first_name' => 'Admin',
             'last_name' => 'User',
             'gender' => 'male',
