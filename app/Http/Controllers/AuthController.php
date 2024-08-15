@@ -316,22 +316,14 @@ class AuthController extends Controller
 
     public function getCurrentUser(Request $request)
     {
-            $user = JWTAuth::parseToken()->authenticate();
+        $user = auth()->user();
 
-            if (!$user) {
-                return response()->json(['error' => 'User not found'], 404);
-            }
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
 
-            $token = JWTAuth::getToken();
-            if (!$token) {
-                return response()->json(['error' => 'Unable to retrieve token'], 401);
-            }
-
-            $accessToken = JWTAuth::refresh($token);
-
-            return response()->json([
-                'user' => new UserResource($user),
-                'access_token' => $accessToken,
-            ], 200);
+        return response()->json([
+            'user' => new UserResource($user),
+        ], 200);
     }
 }
