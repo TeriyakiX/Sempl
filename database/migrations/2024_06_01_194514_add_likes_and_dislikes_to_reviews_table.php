@@ -6,29 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::table('reviews', function (Blueprint $table) {
-            $table->integer('likes_count')->default(0);
-            $table->integer('dislikes_count')->default(0);
-        });
+        // Check if column exists before dropping it
+        if (Schema::hasColumn('reviews', 'likes_count')) {
+            Schema::table('reviews', function (Blueprint $table) {
+                $table->dropColumn('likes_count');
+            });
+        }
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::table('reviews', function (Blueprint $table) {
-            $table->dropColumn('likes_count');
-            $table->dropColumn('dislikes_count');
-        });
+        // If the column was dropped, you can add it back in the down method
+        if (!Schema::hasColumn('reviews', 'likes_count')) {
+            Schema::table('reviews', function (Blueprint $table) {
+                $table->integer('likes_count')->default(0);
+            });
+        }
     }
 };

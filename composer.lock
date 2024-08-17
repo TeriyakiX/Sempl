@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "83233e6f623e1761bc45393524b6a322",
+    "content-hash": "c2012143518a8e59e2ef45b369af90c3",
     "packages": [
         {
             "name": "brick/math",
@@ -134,6 +134,112 @@
                 }
             ],
             "time": "2023-12-11T17:09:12+00:00"
+        },
+        {
+            "name": "dadata/apiclient",
+            "version": "2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://bitbucket.org/henui/dadata-apiclient.git",
+                "reference": "fd9ce7581660506442439ac29f51b4166c96da23"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://bitbucket.org/henui/dadata-apiclient/get/fd9ce7581660506442439ac29f51b4166c96da23.zip",
+                "reference": "fd9ce7581660506442439ac29f51b4166c96da23",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": ">=6.3.0",
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                "src/"
+            ],
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Evgeniy Zhelyazkov",
+                    "email": "evgeniyzhelyazkov@gmail.com",
+                    "homepage": "http://henui.ru",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Client library for http://dadata.ru APIs",
+            "homepage": "https://bitbucket.org/henui/dadata-apiclient",
+            "keywords": [
+                "DaData"
+            ],
+            "support": {
+                "source": "https://bitbucket.org/henui/dadata-apiclient/src/fd9ce7581660506442439ac29f51b4166c96da23/?at=2.0.2"
+            },
+            "time": "2021-05-14T11:45:01+00:00"
+        },
+        {
+            "name": "dadata/dadata-api-bundle",
+            "version": "2.0.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://bitbucket.org/henui/dadata-api-bundle.git",
+                "reference": "40038456c027584811a8b4f780aece8155707099"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://bitbucket.org/henui/dadata-api-bundle/get/40038456c027584811a8b4f780aece8155707099.zip",
+                "reference": "40038456c027584811a8b4f780aece8155707099",
+                "shasum": ""
+            },
+            "require": {
+                "dadata/apiclient": ">=1.0.0",
+                "php": ">=5.2.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DadataApiBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Evgeniy Zhelyazkov",
+                    "email": "evgeniyzhelyazkov@gmail.com",
+                    "homepage": "http://henui.ru",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Symfony Bundle for http://dadata.ru APIs client library",
+            "homepage": "https://bitbucket.org/henui/dadata-api-bundle",
+            "keywords": [
+                "DadataBundle"
+            ],
+            "support": {
+                "source": "https://bitbucket.org/henui/dadata-api-bundle/src/40038456c027584811a8b4f780aece8155707099/?at=2.0.0.2"
+            },
+            "time": "2022-07-11T14:22:18+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -1648,16 +1754,16 @@
         },
         {
             "name": "league/commonmark",
-            "version": "2.5.2",
+            "version": "2.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/commonmark.git",
-                "reference": "df09d5b6a4188f8f3c3ab2e43a109076a5eeb767"
+                "reference": "b650144166dfa7703e62a22e493b853b58d874b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/df09d5b6a4188f8f3c3ab2e43a109076a5eeb767",
-                "reference": "df09d5b6a4188f8f3c3ab2e43a109076a5eeb767",
+                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/b650144166dfa7703e62a22e493b853b58d874b0",
+                "reference": "b650144166dfa7703e62a22e493b853b58d874b0",
                 "shasum": ""
             },
             "require": {
@@ -1670,8 +1776,8 @@
             },
             "require-dev": {
                 "cebe/markdown": "^1.0",
-                "commonmark/cmark": "0.31.0",
-                "commonmark/commonmark.js": "0.31.0",
+                "commonmark/cmark": "0.31.1",
+                "commonmark/commonmark.js": "0.31.1",
                 "composer/package-versions-deprecated": "^1.8",
                 "embed/embed": "^4.4",
                 "erusev/parsedown": "^1.0",
@@ -1750,7 +1856,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-08-14T10:56:57+00:00"
+            "time": "2024-08-16T11:46:16+00:00"
         },
         {
             "name": "league/config",
@@ -2122,6 +2228,83 @@
                 }
             ],
             "time": "2024-06-28T09:40:51+00:00"
+        },
+        {
+            "name": "movemoveapp/laravel-dadata",
+            "version": "1.0.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/movemoveapp/laravel-dadata.git",
+                "reference": "090e5d9d6561d75fe605a183e3801df77b8b83eb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/movemoveapp/laravel-dadata/zipball/090e5d9d6561d75fe605a183e3801df77b8b83eb",
+                "reference": "090e5d9d6561d75fe605a183e3801df77b8b83eb",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.0|^7.2",
+                "php": "^7.3|^8.0|^8.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^6.2.0",
+                "phpunit/phpunit": "^9.4.0"
+            },
+            "type": "laravel-package",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "MoveMoveIo\\DaData\\DaDataServiceProvider"
+                    ],
+                    "aliases": {
+                        "DaDataAddress": "MoveMoveIo\\DaData\\Facades\\DaDataAddress",
+                        "DaDataName": "MoveMoveIo\\DaData\\Facades\\DaDataName",
+                        "DaDataEmail": "MoveMoveIo\\DaData\\Facades\\DaDataEmail",
+                        "DaDataPhone": "MoveMoveIo\\DaData\\Facades\\DaDataPhone",
+                        "DaDataCompany": "MoveMoveIo\\DaData\\Facades\\DaDataCompany",
+                        "DaDataBank": "MoveMoveIo\\DaData\\Facades\\DaDataBank",
+                        "DaDataPassport": "MoveMoveIo\\DaData\\Facades\\DaDataPassport"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MoveMoveIo\\DaData\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Kovalev aka Pipisco",
+                    "email": "d.kovalev@movemove.io",
+                    "homepage": "https://movemove.io",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Laravel SDK for working with the DaData.RU service API",
+            "keywords": [
+                "Bank",
+                "DaData",
+                "address",
+                "email",
+                "laravel",
+                "movemoveapp",
+                "name",
+                "passport",
+                "patronymic",
+                "pipisco",
+                "sdk",
+                "surname"
+            ],
+            "support": {
+                "issues": "https://github.com/movemoveapp/laravel-dadata/issues",
+                "source": "https://github.com/movemoveapp/laravel-dadata/tree/v1.0.10"
+            },
+            "time": "2022-04-26T13:20:20+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -8466,7 +8649,7 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,

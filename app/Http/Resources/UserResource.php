@@ -16,6 +16,7 @@ class UserResource extends JsonResource
         $pets = RegistrationAnswer::find($this->pets_id);
         $averageMonthlyIncome = RegistrationAnswer::find($this->average_monthly_income_id);
         $percentageSpentOnCosmetics = RegistrationAnswer::find($this->percentage_spent_on_cosmetics_id);
+
         return [
             'id' => $this->id,
             'login' => $this->login,

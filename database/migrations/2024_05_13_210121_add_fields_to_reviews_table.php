@@ -19,9 +19,17 @@ return new class extends Migration
     public function down()
     {
         Schema::table('reviews', function (Blueprint $table) {
-            $table->dropColumn('pros');
-            $table->dropColumn('cons');
-            $table->dropColumn('media');
+            if (Schema::hasColumn('reviews', 'pros')) {
+                $table->dropColumn('pros');
+            }
+
+            if (Schema::hasColumn('reviews', 'cons')) {
+                $table->dropColumn('cons');
+            }
+
+            if (Schema::hasColumn('reviews', 'media')) {
+                $table->dropColumn('media');
+            }
         });
     }
 };

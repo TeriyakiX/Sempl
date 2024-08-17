@@ -6,6 +6,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\DaDataService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -17,9 +18,17 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Support\Str;
+use MoveMoveIo\DaData\Facades\DaData;
 use Illuminate\Support\Facades\Log;
 class AuthController extends Controller
 {
+
+    protected $dadataService;
+
+    public function __construct(DaDataService $dadataService)
+    {
+        $this->dadataService = $dadataService;
+    }
     public function login(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
@@ -156,7 +165,7 @@ class AuthController extends Controller
             'access_token' => $token
         ], 200);
     }
-    public function completeRegistration(UserRequest $request)
+    public function completeRegistration(UserRequest $request, DaDataService $dadataService)
     {
         $user = JWTAuth::parseToken()->authenticate();
 
@@ -164,16 +173,32 @@ class AuthController extends Controller
             return response()->json(['error' => 'User not found.'], 404);
         }
 
-        // Заполняем поля пользователя, используя ID ответов
+        // Формирование полного адреса
+        $fullAddress = implode(' ', array_filter([
+            $request->input('city'),
+            $request->input('street'),
+            $request->input('house_number'),
+            $request->input('apartment_number'),
+            $request->input('entrance'),
+            $request->input('postal_code'),
+        ]));
+
+        $standardizedAddress = $dadataService->standardizeAddress($fullAddress);
+
+        if (isset($standardizedAddress['error'])) {
+            return response()->json(['error' => $standardizedAddress['error']], 400);
+        }
+
         $user->fill($request->only([
             'login', 'first_name', 'last_name', 'gender', 'birthdate', 'app_name',
             'email', 'address',
             'people_living_with_id', 'has_children_id', 'pets_id',
             'average_monthly_income_id', 'percentage_spent_on_cosmetics_id',
-            'vk_profile', 'telegram_profile',
-            'delivery_address', 'city', 'street', 'house_number',
+            'vk_profile', 'telegram_profile', 'city', 'street', 'house_number',
             'apartment_number', 'entrance', 'postal_code', 'want_advertising', 'accept_policy'
         ]));
+
+        $user->full_address = $standardizedAddress['result'] ?? $fullAddress;
 
         // Если передан файл фотографии, сохраняем его
         if ($request->hasFile('profile_photo')) {
