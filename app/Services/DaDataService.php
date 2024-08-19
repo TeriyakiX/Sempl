@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
+use MoveMoveIo\DaData\Enums\Language;
 use MoveMoveIo\DaData\Facades\DaDataAddress;
 
 class DaDataService
@@ -64,6 +65,19 @@ class DaDataService
             'error' => $errorMessage,
             'details' => $errorDetails
         ];
+    }
+
+
+    public function getAddressSuggestions(string $query, int $count = 5): array
+    {
+        try {
+            $suggestions = DaDataAddress::prompt($query, $count, Language::RU);
+
+            return $suggestions;
+        } catch (\Exception $e) {
+            \Log::error('Error getting address suggestions:', ['error' => $e->getMessage()]);
+            return ['error' => 'Ошибка получения подсказок адреса: ' . $e->getMessage()];
+        }
     }
 
 }

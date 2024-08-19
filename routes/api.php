@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressSuggestionController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
@@ -152,5 +153,7 @@ use App\Http\Controllers\ProductController;
 
         Route::get('/registration-questions', [RegistrationQuestionController::class, 'index']); // Get all RegistrationQuestions
 
+
+        Route::get('/address-suggest', [AddressSuggestionController::class, 'suggest']);
     });
 
