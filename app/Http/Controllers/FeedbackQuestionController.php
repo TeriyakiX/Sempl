@@ -26,6 +26,6 @@ class FeedbackQuestionController extends Controller
     public function getQuestions()
     {
         $questions = FeedbackQuestion::with('answers')->get();
-        return response()->json($questions);
+        return response()->json(['data' => $questions]);
     }
 }
