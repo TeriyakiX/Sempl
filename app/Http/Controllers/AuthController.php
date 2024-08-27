@@ -167,7 +167,11 @@ class AuthController extends Controller
     }
     public function completeRegistration(UserRequest $request, DaDataService $dadataService)
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+            return response()->json(['error' => 'Invalid token. Please reverify your code.'], 401);
+        }
 
         if (!$user) {
             return response()->json(['error' => 'User not found.'], 404);
@@ -200,17 +204,14 @@ class AuthController extends Controller
 
         $user->full_address = $standardizedAddress['result'] ?? $fullAddress;
 
-        // Если передан файл фотографии, сохраняем его
         if ($request->hasFile('profile_photo')) {
             $photo = $request->file('profile_photo');
             $path = $photo->store('profile_photos', 'public');
 
-            // Удаляем старую фотографию, если она существует и не является URL
             if ($user->profile_photo && !filter_var($user->profile_photo, FILTER_VALIDATE_URL)) {
                 Storage::disk('public')->delete($user->profile_photo);
             }
 
-            // Сохраняем новый путь к фотографии в базе данных
             $user->profile_photo = $path;
         }
 
@@ -220,6 +221,10 @@ class AuthController extends Controller
 
         $user->verification_code = null;
         $user->code_sent_at = null;
+
+        // Устанавливаем флаг завершения регистрации
+        $user->is_registration_completed = true;
+
         $user->save();
 
         $token = JWTAuth::fromUser($user);

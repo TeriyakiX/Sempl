@@ -24,7 +24,8 @@ class FeedbackRequest extends FormRequest
             'con_1' => 'nullable|string',
             'con_2' => 'nullable|string',
             'rating' => 'required|integer|between:1,5',
-            'photos.*' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photos.*' => 'mimes:jpeg,png,jpg,gif|max:2048', // Правила для фотографий
+            'videos.*' => 'mimes:mp4,avi,mov|max:50000', // Правила для видео
         ];
     }
 }

@@ -91,11 +91,11 @@ class ProductFeedback extends Model
             $this->save();
         }
     }
+
     public function isDisliked()
     {
         return $this->dislikes > 0;
     }
-
 
     public function fixedQuestion1()
     {
@@ -110,5 +110,10 @@ class ProductFeedback extends Model
     public function fixedQuestion3()
     {
         return $this->belongsTo(FeedbackAnswer::class, 'fixed_question_3');
+    }
+
+    public function photos()
+    {
+        return $this->hasMany(FeedbackPhoto::class, 'feedback_id');
     }
 }

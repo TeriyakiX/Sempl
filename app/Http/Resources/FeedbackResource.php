@@ -8,8 +8,20 @@ class FeedbackResource extends JsonResource
 {
     public function toArray($request)
     {
+        // Преобразуем JSON строки в массивы путей
+        $photos = $this->photos ? json_decode($this->photos, true) : [];
+        $videos = $this->videos ? json_decode($this->videos, true) : [];
 
-        $photos = $this->photos ? explode(',', $this->photos) : [];
+        // Генерируем полный URL для каждой фотографии
+        $photoUrls = array_map(function ($photo) {
+            return asset('storage/' . $photo);
+        }, $photos);
+
+        // Генерируем полный URL для каждого видео
+        $videoUrls = array_map(function ($video) {
+            return asset('storage/' . $video);
+        }, $videos);
+
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
@@ -37,7 +49,8 @@ class FeedbackResource extends JsonResource
             'rating' => $this->rating,
             'status' => $this->status,
             'delivery_date' => $this->delivery_date,
-            'photos' => $this->when($this->photos !== null, asset('storage/' . $this->photos)),
+            'photos' => $photoUrls, // Возвращаем массив URL-ов для фотографий
+            'videos' => $videoUrls, // Возвращаем массив URL-ов для видео
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'likes' => $this->likes,
@@ -45,6 +58,5 @@ class FeedbackResource extends JsonResource
             'liked_by_user' => $this->liked_by_user,
             'disliked_by_user' => $this->disliked_by_user,
         ];
-
     }
 }

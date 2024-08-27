@@ -7,6 +7,7 @@ use App\Http\Resources\FeedbackResource;
 use App\Models\Product;
 use App\Models\ProductFeedback;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -17,7 +18,6 @@ class ProductFeedbackController extends Controller
         $feedbacks = ProductFeedback::all();
         return FeedbackResource::collection($feedbacks);
     }
-
     public function store(FeedbackRequest $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
@@ -38,16 +38,39 @@ class ProductFeedbackController extends Controller
             'status' => ProductFeedback::STATUS_AWAITING_REVIEW,
         ]);
 
-        if ($request->hasFile('photos')) {
-            $photo = $request->file('photos');
-            $path = $photo->store('feedback_photos', 'public');
-            $feedback->photos = $path;
+        $photoPaths = [];
+        $videoPaths = [];
+
+        try {
+            // Обработка фотографий
+            if ($request->hasFile('photos')) {
+                foreach ($request->file('photos') as $photo) {
+                    $newName = time() . '_' . uniqid() . '.' . $photo->getClientOriginalExtension();
+                    $path = $photo->storeAs('feedback_photos', $newName, 'public');
+                    $photoPaths[] = $path;
+                }
+            }
+
+            // Обработка видео
+            if ($request->hasFile('videos')) {
+                foreach ($request->file('videos') as $video) {
+                    $newName = time() . '_' . uniqid() . '.' . $video->getClientOriginalExtension();
+                    $path = $video->storeAs('feedback_videos', $newName, 'public');
+                    $videoPaths[] = $path;
+                }
+            }
+
+            // Сохраняем пути к файлам в базе данных
+            $feedback->photos = json_encode($photoPaths);
+            $feedback->videos = json_encode($videoPaths);
+            $feedback->save();
+        } catch (\Exception $e) {
+            Log::error('Error storing files: ' . $e->getMessage());
+            return response()->json(['error' => 'Error storing files'], 500);
         }
-        $feedback->save();
 
         $product = Product::findOrFail($request->product_id);
         $product->updateRating();
-        $product = $feedback->product;
         $product->updateFeedbackCount();
 
         return new FeedbackResource($feedback);

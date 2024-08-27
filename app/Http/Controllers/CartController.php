@@ -41,7 +41,13 @@ class CartController extends Controller
             // Отладочный вывод для проверки продукта
             Log::info('Product found:', ['product' => $product]);
 
-            // Проверка корзины
+            // Проверка, является ли продукт секретным
+            if ($product->is_secret && $user->has_ordered_secret_product) {
+                Log::info('User has already ordered a secret product.');
+                return response()->json(['error' => 'Вы уже заказывали секретный продукт, извините, он доступен только 1 раз.'], 403);
+            }
+
+            // Проверка корзины на наличие продукта
             $this->validateCart($user, $product);
 
             // Добавление продукта в корзину
@@ -122,16 +128,41 @@ class CartController extends Controller
 
     public function checkout(Request $request)
     {
+        // Получаем текущего пользователя
         $user = $this->jwtAuth->parseToken()->authenticate();
 
+        if (!$user) {
+            return response()->json(['error' => 'User not found.'], 404);
+        }
+
+        // Валидация входных данных
         $request->validate([
             'delivery_address' => 'required|string|max:255',
+            'city' => 'required|string',
+            'street' => 'required|string',
+            'house_number' => 'required|string',
+            'apartment_number' => 'nullable|string',
+            'entrance' => 'nullable|string',
+            'postal_code' => 'required|string',
         ]);
 
+        // Получаем элементы корзины пользователя
         $cartItems = $user->cart;
 
         if ($cartItems->isEmpty()) {
             return response()->json(['error' => 'Cart is empty.'], 400);
+        }
+
+        // Проверяем, есть ли в корзине секретные продукты
+        $secretProductIds = $cartItems->filter(function ($item) {
+            return $item->product->is_secret;
+        })->pluck('product_id')->toArray();
+
+        // Если в корзине есть секретные продукты, проверяем, заказывал ли пользователь уже секретный продукт
+        if (!empty($secretProductIds)) {
+            if ($user->has_ordered_secret_product) {
+                return response()->json(['error' => 'You have already ordered a secret product.'], 403);
+            }
         }
 
         // Создаем заказ
@@ -158,6 +189,13 @@ class CartController extends Controller
         // Обновляем статусы товаров в заказе на 'ожидает'
         Product::whereIn('id', $productIds)->update(['expected' => true]);
 
+        // Если в корзине были секретные продукты, обновляем статус пользователя
+        if (!empty($secretProductIds)) {
+            $user->has_ordered_secret_product = true;
+            $user->save();
+        }
+
         return response()->json(['message' => 'Ваш заказ создан, ожидайте обратной связи.'], 200);
     }
+
 }
