@@ -49,6 +49,7 @@ class UserResource extends JsonResource
             'updated_at' => $this->updated_at,
             'phone' => $this->phone,
             'is_registration_completed' => $this->is_registration_completed,
+            'has_ordered_secret_product' => $this->has_ordered_secret_product,
 
         ];
     }
