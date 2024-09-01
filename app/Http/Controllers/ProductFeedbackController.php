@@ -6,6 +6,7 @@ use App\Http\Requests\FeedbackRequest;
 use App\Http\Resources\FeedbackResource;
 use App\Models\Product;
 use App\Models\ProductFeedback;
+use App\Models\Purchase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -22,8 +23,17 @@ class ProductFeedbackController extends Controller
     {
         $user = JWTAuth::parseToken()->authenticate();
 
-        // Создаем новый отзыв
-        $feedback = ProductFeedback::create([
+        $feedback = $this->createFeedback($request, $user);
+        $this->handleFiles($request, $feedback);
+        $this->updateProductInfo($request->product_id);
+        $this->updatePurchaseStatus($request->purchase_id, $request->product_id, $user->id);
+
+        return new FeedbackResource($feedback);
+    }
+
+    protected function createFeedback($request, $user)
+    {
+        return ProductFeedback::create([
             'user_id' => $user->id,
             'product_id' => $request->product_id,
             'fixed_question_1' => $request->fixed_question_1,
@@ -37,7 +47,10 @@ class ProductFeedbackController extends Controller
             'rating' => $request->rating,
             'status' => ProductFeedback::STATUS_AWAITING_REVIEW,
         ]);
+    }
 
+    protected function handleFiles($request, $feedback)
+    {
         $photoPaths = [];
         $videoPaths = [];
 
@@ -60,21 +73,38 @@ class ProductFeedbackController extends Controller
                 }
             }
 
-            // Сохраняем пути к файлам в базе данных
             $feedback->photos = json_encode($photoPaths);
             $feedback->videos = json_encode($videoPaths);
             $feedback->save();
         } catch (\Exception $e) {
             Log::error('Error storing files: ' . $e->getMessage());
-            return response()->json(['error' => 'Error storing files'], 500);
+            throw $e;
         }
+    }
 
-        $product = Product::findOrFail($request->product_id);
+    protected function updateProductInfo($productId)
+    {
+        $product = Product::findOrFail($productId);
         $product->updateRating();
         $product->updateFeedbackCount();
-
-        return new FeedbackResource($feedback);
     }
+    protected function updatePurchaseStatus($purchaseId, $productId, $userId)
+    {
+        $purchase = Purchase::whereHas('products', function ($query) use ($productId) {
+            $query->where('product_id', $productId);
+        })
+            ->where('id', $purchaseId)
+            ->where('user_id', $userId)
+            ->where('status', 'awaiting_review')
+            ->first();
+
+        if ($purchase) {
+            $purchase->update(['status' => 'completed']);
+        }
+    }
+
+
+
 
     public function show(ProductFeedback $feedback)
     {

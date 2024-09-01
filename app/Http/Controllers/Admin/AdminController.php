@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Purchase;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 class AdminController extends Controller
 {
@@ -21,19 +22,20 @@ class AdminController extends Controller
 
     public function updateStatus(Request $request, Purchase $purchase)
     {
-        // Проверяем, что запрос содержит корректные данные
         $request->validate([
             'status' => 'required|in:pending,awaiting_review,completed',
             'delivery_date' => 'nullable|date_format:Y-m-d',
         ]);
 
-        // Обновляем статус заказа и дату доставки
         $purchase->status = $request->status;
 
-        if ($request->has('delivery_date')) {
+        if ($request->status === 'awaiting_review') {
+            $purchase->delivery_date = Carbon::now()->addDays(10)->format('Y-m-d');
+        } elseif ($request->has('delivery_date')) {
             $purchase->delivery_date = $request->delivery_date;
         }
 
+        // Сохраняем изменения в базе данных
         $purchase->save();
 
         return response()->json([

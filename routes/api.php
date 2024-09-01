@@ -33,6 +33,12 @@ use App\Http\Controllers\ProductController;
             Route::delete('/{product}/delete', [ProductController::class, 'destroy']); // Delete a product
             Route::patch('/{id}/make-secret', [ProductController::class, 'makeSecret']); // Make a product secret
             Route::patch('{id}/make-not-secret', [ProductController::class, 'makeNotSecret']); // Make a product not secret
+            // Маршруты для работы с популярными товарами
+            Route::patch('/{id}/make-popular', [ProductController::class, 'makePopular']); // Make a product Popular
+            Route::patch('{id}/make-not-popular', [ProductController::class, 'makeNotPopular']); // Make a product not Popular
+            // Маршруты для работы с специальными товарами
+            Route::patch('/{id}/make-special', [ProductController::class, 'makeSpecial']); // Make a product Special
+            Route::patch('{id}/make-not-special', [ProductController::class, 'makeNotSpecial']); // Make a product not Special
         });
 
         Route::prefix('categories')->group(function () {
@@ -72,8 +78,12 @@ use App\Http\Controllers\ProductController;
             Route::post('/{product}/like', [ProductController::class, 'like']); // Like a product
             Route::post('/{product}/dislike', [ProductController::class, 'dislike']); // Dislike a product
             Route::get('/{product}/feedbacks', [ProductFeedbackController::class, 'getProductReviews']); // Get product feedbacks
-            Route::get('//secret', [ProductController::class, 'getSecretProducts']); // Get all secret products
+            Route::get('/secret', [ProductController::class, 'getSecretProducts']); // Get all secret products
             Route::get('/secret/{id}', [ProductController::class, 'getSecretProductDetail']); // Get secret product by ID
+            Route::get('/popular', [ProductController::class, 'getPopularProducts']); // Get all popular products
+            Route::get('/popular/{id}', [ProductController::class, 'getPopularProductDetail']); // Get a popular product by ID
+            Route::get('/special', [ProductController::class, 'getSpecialProducts']); // Get all special products
+            Route::get('/special/{id}', [ProductController::class, 'getSpecialProductDetail']); // Get a special product by ID
         });
 
         Route::prefix('categories')->group(function () {

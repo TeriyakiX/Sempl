@@ -168,5 +168,72 @@ class ProductController extends Controller
     }
 
 
+    // Метод для получения всех популярных продуктов
+    public function getPopularProducts()
+    {
+        $popularProducts = Product::where('is_popular', true)->get();
+        return ProductResource::collection($popularProducts);
+    }
+
+    // Метод для получения подробной информации о популярном продукте по ID
+    public function getPopularProductDetail($id)
+    {
+        $popularProduct = Product::where('is_popular', true)->findOrFail($id);
+        return new ProductResource($popularProduct);
+    }
+
+    // Метод для получения всех специальных продуктов
+    public function getSpecialProducts()
+    {
+        $specialProducts = Product::where('is_special', true)->get();
+        return ProductResource::collection($specialProducts);
+    }
+
+    // Метод для получения подробной информации о специальном продукте по ID
+    public function getSpecialProductDetail($id)
+    {
+        $specialProduct = Product::where('is_special', true)->findOrFail($id);
+        return new ProductResource($specialProduct);
+    }
+
+    // Методы для установки продукта как популярного
+    public function makePopular($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->is_popular = true;
+        $product->save();
+
+        return response()->json(['message' => 'Product marked as popular successfully.']);
+    }
+
+    public function makeNotPopular($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->is_popular = false;
+        $product->save();
+
+        return response()->json(['message' => 'Product unmarked as popular successfully.']);
+    }
+
+    // Методы для установки продукта как специального
+    public function makeSpecial($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->is_special = true;
+        $product->save();
+
+        return response()->json(['message' => 'Product marked as special successfully.']);
+    }
+
+    public function makeNotSpecial($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->is_special = false;
+        $product->save();
+
+        return response()->json(['message' => 'Product unmarked as special successfully.']);
+    }
+
+
 
 }
