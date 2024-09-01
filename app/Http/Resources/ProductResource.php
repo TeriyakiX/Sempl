@@ -33,6 +33,8 @@ class ProductResource extends JsonResource
             'dislikes' => $this->dislikesCount(),
             'feedback_count' => $this->feedback_count,
             'is_secret' => $this->is_secret,
+            'is_popular' => $this->is_popular, // Добавляем поле "популярный"
+            'is_special' => $this->is_special, // Добавляем поле "специальный"
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
