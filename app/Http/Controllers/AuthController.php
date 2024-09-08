@@ -165,7 +165,7 @@ class AuthController extends Controller
             'access_token' => $token
         ], 200);
     }
-    public function completeRegistration(UserRequest $request, DaDataService $dadataService)
+    public function completeRegistration(UserRequest $request)
     {
         try {
             $user = JWTAuth::parseToken()->authenticate();
@@ -177,7 +177,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'User not found.'], 404);
         }
 
-        // Формирование полного адреса
+        // Формирование полного адреса без стандартизации через DaData
         $fullAddress = implode(' ', array_filter([
             $request->input('city'),
             $request->input('street'),
@@ -187,12 +187,7 @@ class AuthController extends Controller
             $request->input('postal_code'),
         ]));
 
-        $standardizedAddress = $dadataService->standardizeAddress($fullAddress);
-
-        if (isset($standardizedAddress['error'])) {
-            return response()->json(['error' => $standardizedAddress['error']], 400);
-        }
-
+        // Сохраняем оригинальный адрес пользователя
         $user->fill($request->only([
             'login', 'first_name', 'last_name', 'gender', 'birthdate', 'app_name',
             'email', 'address',
@@ -202,7 +197,7 @@ class AuthController extends Controller
             'apartment_number', 'entrance', 'postal_code', 'want_advertising', 'accept_policy'
         ]));
 
-        $user->full_address = $standardizedAddress['result'] ?? $fullAddress;
+        $user->full_address = $fullAddress;
 
         if ($request->hasFile('profile_photo')) {
             $photo = $request->file('profile_photo');
