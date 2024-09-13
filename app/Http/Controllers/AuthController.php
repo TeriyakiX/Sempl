@@ -190,12 +190,15 @@ class AuthController extends Controller
         // Сохраняем оригинальный адрес пользователя
         $user->fill($request->only([
             'login', 'first_name', 'last_name', 'gender', 'birthdate', 'app_name',
-            'email', 'address',
-            'people_living_with_id', 'has_children_id', 'pets_id',
+            'email', 'people_living_with_id', 'has_children_id', 'pets_id',
             'average_monthly_income_id', 'percentage_spent_on_cosmetics_id',
             'vk_profile', 'telegram_profile', 'city', 'street', 'house_number',
-            'apartment_number', 'entrance', 'postal_code', 'want_advertising', 'accept_policy'
+            'apartment_number', 'entrance', 'postal_code'
         ]));
+
+        // Обработка значений accept_policy и want_advertising
+        $user->accept_policy = $request->input('accept_policy', false) ? true : false;
+        $user->want_advertising = $request->input('want_advertising', false) ? true : false;
 
         $user->full_address = $fullAddress;
 
@@ -328,7 +331,7 @@ class AuthController extends Controller
 
         return response()->json([
             'access_token' => $token,
-            'user' => $user,
+            'user' => new UserResource($user),
             'message' => 'User logged in successfully.'
         ], 200);
     }

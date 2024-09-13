@@ -6,6 +6,7 @@ use App\Http\Requests\StoreOrderRequest;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\SampleRequestResource;
 use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -79,10 +80,21 @@ class   OrderController extends Controller
 
             $orders = $user->orders;
 
+            // Если у пользователя нет заказов и он не заказывал специальный продукт
+            if ($orders->isEmpty() && !$user->has_ordered_special_product) {
+                $specialProducts = Product::where('is_special', true)->get();
+                return response()->json([
+                    'orders' => OrderResource::collection($orders),
+                    'special_products' => $specialProducts,
+                    'access_token' => $accessToken,
+                ], 200);
+            }
+
             return response()->json([
                 'orders' => OrderResource::collection($orders),
                 'access_token' => $accessToken,
             ], 200);
+
         } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
             return response()->json(['error' => 'Unable to authenticate user'], 401);
         }

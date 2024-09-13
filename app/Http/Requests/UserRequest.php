@@ -46,7 +46,7 @@ class UserRequest extends FormRequest
             'apartment_number' => 'nullable|string',
             'entrance' => 'nullable|string',
             'postal_code' => 'required|string',
-            'want_advertising' => 'required|boolean|accepted',
+            'want_advertising' => 'nullable|boolean',
             'accept_policy' => 'required|boolean|accepted',
         ];
     }
@@ -102,9 +102,6 @@ class UserRequest extends FormRequest
             'postal_code.required' => 'Поле Почтовый индекс является обязательным.',
             'postal_code.string' => 'Поле Почтовый индекс должно быть строкой.',
             'postal_code.regex' => 'Поле Почтовый индекс должно состоять из 5 цифр.',
-            'want_advertising.required' => 'Поле "Хотите получать рекламу" является обязательным.',
-            'want_advertising.boolean' => 'Поле "Хотите получать рекламу" должно быть истинным или ложным.',
-            'want_advertising.accepted' => 'Поле "Хотите получать рекламу" должно быть принято.',
             'accept_policy.required' => 'Поле "Принять политику" является обязательным.',
             'accept_policy.boolean' => 'Поле "Принять политику" должно быть истинным или ложным.',
             'accept_policy.accepted' => 'Поле "Принять политику" должно быть принято.',

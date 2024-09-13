@@ -28,7 +28,6 @@ class UpdateUserRequest extends FormRequest
             'email' => 'required|string|email|max:255|unique:users,email,' . $this->user()->id,
             'address' => 'required|string|max:255',
             'has_children' => 'required|boolean',
-            'delivery_address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'street' => 'required|string|max:255',
             'house_number' => 'required|string|max:255',

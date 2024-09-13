@@ -28,9 +28,6 @@ class CartController extends Controller
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
 
-            // Отладочный вывод для проверки аутентификации
-            Log::info('Authenticated user:', ['user' => $user]);
-
             // Проверка существования продукта
             $product = $this->findProduct($request->input('product_id'));
             if (!$product) {
@@ -38,23 +35,20 @@ class CartController extends Controller
                 return response()->json(['error' => 'Product not found.'], 404);
             }
 
-            // Отладочный вывод для проверки продукта
-            Log::info('Product found:', ['product' => $product]);
-
-            // Проверка, является ли продукт секретным
-            if ($product->is_secret && $user->has_ordered_secret_product) {
-                Log::info('User has already ordered a secret product.');
-                return response()->json(['error' => 'Вы уже заказывали секретный продукт, извините, он доступен только 1 раз.'], 403);
+            // Проверка, является ли продукт специальным
+            if ($product->is_special && $user->has_ordered_special_product) {
+                Log::info('User has already ordered a special product.');
+                return response()->json(['error' => 'Вы уже заказывали специальный продукт, он доступен только 1 раз.'], 403);
             }
-
-            // Проверка корзины на наличие продукта
-            $this->validateCart($user, $product);
 
             // Добавление продукта в корзину
             $user->cart()->create(['product_id' => $product->id]);
 
-            // Отладочный вывод для проверки корзины
-            Log::info('Product added to cart:', ['product' => $product]);
+            // Отметка, что пользователь заказал специальный продукт
+            if ($product->is_special) {
+                $user->has_ordered_special_product = true;
+                $user->save();
+            }
 
             return response()->json(['message' => 'Продукт добавлен в корзину.'], 200);
         } catch (\Exception $e) {
