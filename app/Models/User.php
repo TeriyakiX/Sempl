@@ -43,7 +43,8 @@ class User extends Authenticatable implements JWTSubject
         'postal_code',
         'phone',
         'verification_code',
-        'code_sent_at'
+        'code_sent_at',
+        'can_view_secret_products'
     ];
 
     protected $hidden = [

@@ -33,6 +33,8 @@ use App\Http\Controllers\ProductController;
             Route::delete('/{product}/delete', [ProductController::class, 'destroy']); // Delete a product
             Route::patch('/{id}/make-secret', [ProductController::class, 'makeSecret']); // Make a product secret
             Route::patch('{id}/make-not-secret', [ProductController::class, 'makeNotSecret']); // Make a product not secret
+            Route::put('/users/{userId}/secret-access', [UserController::class, 'updateUserSecretAccess']); //
+
             // Маршруты для работы с популярными товарами
             Route::patch('/{id}/make-popular', [ProductController::class, 'makePopular']); // Make a product Popular
             Route::patch('{id}/make-not-popular', [ProductController::class, 'makeNotPopular']); // Make a product not Popular

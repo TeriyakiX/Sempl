@@ -159,6 +159,21 @@ class UserController extends Controller
         return new OrderDetailResource($order);
     }
 
+    public function updateUserSecretAccess(Request $request, $userId)
+    {
+        $user = User::find($userId);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found.'], 404);
+        }
+
+        // Обновляем возможность просмотра секретных товаров
+        $user->can_view_secret_products = $request->input('can_view_secret_products', false);
+        $user->save();
+
+        return response()->json(['message' => 'User secret product access updated successfully.', 'user' => new UserResource($user)], 200);
+    }
+
 
 
 }

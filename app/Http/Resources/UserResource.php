@@ -50,7 +50,7 @@ class UserResource extends JsonResource
             'phone' => $this->phone,
             'is_registration_completed' => $this->is_registration_completed,
             'has_ordered_secret_product' => $this->has_ordered_secret_product,
-
+            'can_view_secret_products' => $this->can_view_secret_products,  // Добавлено поле для отображения
         ];
     }
 }
