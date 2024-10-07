@@ -44,11 +44,6 @@ class ProductFeedback extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function questions()
-    {
-        return $this->hasMany(FeedbackQuestion::class);
-    }
-
     public function addLike()
     {
         if (!$this->isLiked()) {
@@ -115,5 +110,18 @@ class ProductFeedback extends Model
     public function photos()
     {
         return $this->hasMany(FeedbackPhoto::class, 'feedback_id');
+    }
+
+    // Определение связи с ответами
+    public function answers()
+    {
+        return $this->hasMany(ProductFeedbackAnswer::class, 'feedback_id');
+    }
+
+    // Определение связи с вопросами
+    public function questions()
+    {
+        return $this->hasMany(ProductFeedbackAnswer::class, 'feedback_id')
+            ->with('question');
     }
 }

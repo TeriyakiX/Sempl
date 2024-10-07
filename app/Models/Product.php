@@ -26,6 +26,12 @@ class Product extends Model
         $this->save();
     }
 
+    // Определение связи с вопросами
+    public function questions()
+    {
+        return $this->hasMany(ProductQuestion::class);
+    }
+
 
 
     public function orders()

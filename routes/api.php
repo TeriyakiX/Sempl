@@ -4,6 +4,7 @@ use App\Http\Controllers\AddressSuggestionController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductQuestionController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\RegistrationQuestionController;
 use App\Http\Controllers\ReviewController;
@@ -33,7 +34,7 @@ use App\Http\Controllers\ProductController;
             Route::delete('/{product}/delete', [ProductController::class, 'destroy']); // Delete a product
             Route::patch('/{id}/make-secret', [ProductController::class, 'makeSecret']); // Make a product secret
             Route::patch('{id}/make-not-secret', [ProductController::class, 'makeNotSecret']); // Make a product not secret
-            Route::put('/users/{userId}/secret-access', [UserController::class, 'updateUserSecretAccess']); //
+            Route::put('/users/{userId}/secret-access', [UserController::class, 'updateUserSecretAccess']); // Update user's access to secret products
 
             // Маршруты для работы с популярными товарами
             Route::patch('/{id}/make-popular', [ProductController::class, 'makePopular']); // Make a product Popular
@@ -151,7 +152,12 @@ use App\Http\Controllers\ProductController;
             Route::put('/{product_feedback}/update', [ProductFeedbackController::class, 'update']); // Update feedback by ID
             Route::delete('/{product_feedback}/delete', [ProductFeedbackController::class, 'destroy']); // Delete feedback by ID
         });
-
+        // Маршруты для вопросов к продуктам
+        Route::prefix('products/{product}')->group(function () {
+            Route::get('questions', [ProductQuestionController::class, 'index']); // Получить вопросы для продукта
+            Route::post('questions', [ProductQuestionController::class, 'store']); // Добавить вопрос для продукта
+            Route::put('questions/{question}', [ProductQuestionController::class, 'update']); // Обновить вопрос для продукта
+        });
 
 
         Route::prefix('questions')->group(function () {

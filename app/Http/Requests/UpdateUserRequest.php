@@ -19,7 +19,7 @@ class UpdateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'login' => 'required|string|max:255',
+            'login' => 'required|string|max:255',  // никнейм
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'gender' => 'required|string',
@@ -31,7 +31,11 @@ class UpdateUserRequest extends FormRequest
             'city' => 'required|string|max:255',
             'street' => 'required|string|max:255',
             'house_number' => 'required|string|max:255',
+            'apartment_number' => 'nullable|string|max:255',  // квартира
+            'entrance' => 'nullable|string|max:255',  // подъезд
             'postal_code' => 'required|string|max:20',
+            'vk_profile' => 'nullable|string|max:255',  // социальные сети (ВК)
+            'telegram_profile' => 'nullable|string|max:255',  // социальные сети (Telegram)
             'password' => 'sometimes|string|min:8|confirmed',
             'profile_photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];

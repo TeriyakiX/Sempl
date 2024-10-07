@@ -6,6 +6,7 @@ use App\Http\Requests\FeedbackRequest;
 use App\Http\Resources\FeedbackResource;
 use App\Models\Product;
 use App\Models\ProductFeedback;
+use App\Models\ProductFeedbackAnswer;
 use App\Models\Purchase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -23,7 +24,19 @@ class ProductFeedbackController extends Controller
     {
         $user = JWTAuth::parseToken()->authenticate();
 
+        // Создаем отзыв
         $feedback = $this->createFeedback($request, $user);
+
+        // Сохраняем ответы на вопросы
+        if ($request->has('answers')) {
+            foreach ($request->answers as $answerData) {
+                $feedback->answers()->create([
+                    'question_id' => $answerData['question_id'],
+                    'answer' => $answerData['answer'],
+                ]);
+            }
+        }
+
         $this->handleFiles($request, $feedback);
         $this->updateProductInfo($request->product_id);
         $this->updatePurchaseStatus($request->purchase_id, $request->product_id, $user->id);
