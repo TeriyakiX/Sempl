@@ -26,7 +26,7 @@ class AddressSuggestionController extends Controller
                 'улица' => $suggestion['data']['street_with_type'],
                 'дом' => $suggestion['data']['house'] ?? null,
             ];
-        }, $suggestions);
+        }, $suggestions['suggestions']); // Note the access to 'suggestions' key
 
         return response()->json(['suggestions' => $filteredSuggestions]);
     }
