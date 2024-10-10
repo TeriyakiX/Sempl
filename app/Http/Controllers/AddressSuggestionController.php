@@ -22,7 +22,6 @@ class AddressSuggestionController extends Controller
         $suggestions = DaDataAddress::prompt($query, $count, Language::RU);
         $filteredSuggestions = array_map(function ($suggestion) {
             return [
-                "value" => $suggestion['data']['value'],
                 'city' => $suggestion['data']['city'],
                 'street_with_type' => $suggestion['data']['street_with_type'],
                 'house' => $suggestion['data']['house'] ?? null,
