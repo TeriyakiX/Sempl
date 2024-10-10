@@ -23,11 +23,9 @@ class AddressSuggestionController extends Controller
         // Фильтруем поля
         $filteredSuggestions = array_map(function ($suggestion) {
             return [
-                'postal_code' => $suggestion['data']['postal_code'],
                 'city' => $suggestion['data']['city'],
                 'street' => $suggestion['data']['street'],
-                'geo_lat' => $suggestion['data']['geo_lat'],
-                'geo_lon' => $suggestion['data']['geo_lon'],
+                'house' => $suggestion['data']['house'],
             ];
         }, $suggestions);
 
