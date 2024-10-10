@@ -19,7 +19,7 @@
             <td><img src="{{ $product->photo }}" alt="Фото продукта"></td>
             <td>
                 <a href="{{ route('products.show', $product->id) }}">Просмотр</a>
-                <a href="{{ route('products.edit', $product->id) }}">Редактировать</a>
+                <a href="{{ route('products.update', $product->id) }}">Редактировать</a>
                 <form action="{{ route('products.destroy', $product->id) }}" method="POST">
                     @csrf
                     @method('DELETE')
