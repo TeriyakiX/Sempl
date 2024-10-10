@@ -6,17 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('product_feedback_answers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('feedback_id')->constrained('product_feedback')->onDelete('cascade');
             $table->foreignId('question_id')->constrained('product_questions')->onDelete('cascade');
-            $table->text('answer');
+            $table->unsignedBigInteger('answer_id')->nullable(); // Поле для связи с ответом
             $table->timestamps();
+
+            // Добавление внешнего ключа для поля answer_id, ссылаясь на product_question_answers
+            $table->foreign('answer_id')->references('id')->on('product_question_answers')->onDelete('set null');
         });
     }
 
@@ -25,6 +25,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('product_feedback_answers', function (Blueprint $table) {
+            $table->dropForeign(['answer_id']); // Удаляем внешний ключ
+        });
+
         Schema::dropIfExists('product_feedback_answers');
     }
 };

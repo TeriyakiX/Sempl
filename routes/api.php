@@ -4,6 +4,7 @@ use App\Http\Controllers\AddressSuggestionController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductQuestionAnswerController;
 use App\Http\Controllers\ProductQuestionController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\RegistrationQuestionController;
@@ -157,6 +158,14 @@ use App\Http\Controllers\ProductController;
             Route::get('questions', [ProductQuestionController::class, 'index']); // Получить вопросы для продукта
             Route::post('questions', [ProductQuestionController::class, 'store']); // Добавить вопрос для продукта
             Route::put('questions/{question}', [ProductQuestionController::class, 'update']); // Обновить вопрос для продукта
+        });
+
+        // Маршруты для управления ответами на вопросы
+        Route::prefix('questions/{question}/answers')->group(function () {
+            Route::get('/', [ProductQuestionAnswerController::class, 'index']); // Получение всех ответов
+            Route::post('/', [ProductQuestionAnswerController::class, 'store']); // Создание ответа
+            Route::put('{answer}', [ProductQuestionAnswerController::class, 'update']); // Обновление ответа
+            Route::delete('{answer}', [ProductQuestionAnswerController::class, 'destroy']); // Удаление ответа
         });
 
 

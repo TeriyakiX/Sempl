@@ -7,6 +7,7 @@ use App\Http\Resources\FeedbackResource;
 use App\Models\Product;
 use App\Models\ProductFeedback;
 use App\Models\ProductFeedbackAnswer;
+use App\Models\ProductQuestionAnswer;
 use App\Models\Purchase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -27,16 +28,18 @@ class ProductFeedbackController extends Controller
         // Создаем отзыв
         $feedback = $this->createFeedback($request, $user);
 
-        // Сохраняем ответы на вопросы
+
         if ($request->has('answers')) {
-            foreach ($request->answers as $answerData) {
-                $feedback->answers()->create([
-                    'question_id' => $answerData['question_id'],
-                    'answer' => $answerData['answer'],
+            foreach ($request->answers as $answer) {
+                ProductFeedbackAnswer::create([
+                    'feedback_id' => $feedback->id,
+                    'question_id' => $answer['question_id'],
+                    'answer_id' => $answer['id'], // Здесь указываем id ответа
                 ]);
             }
         }
 
+        // Остальной код обработки файлов и обновления информации о продукте
         $this->handleFiles($request, $feedback);
         $this->updateProductInfo($request->product_id);
         $this->updatePurchaseStatus($request->purchase_id, $request->product_id, $user->id);

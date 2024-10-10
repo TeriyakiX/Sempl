@@ -5,20 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProductFeedbackAnswer extends Model
+class ProductQuestionAnswer extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'feedback_id',
-        'question_id',
-        'answer_id',
-    ];
-
-    public function feedback()
-    {
-        return $this->belongsTo(ProductFeedback::class, 'feedback_id');
-    }
+    protected $fillable = ['question_id', 'answer',];
 
     public function question()
     {

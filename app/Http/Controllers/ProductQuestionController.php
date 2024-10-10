@@ -13,7 +13,7 @@ class ProductQuestionController extends Controller
     // Список вопросов для конкретного продукта
     public function index(Product $product)
     {
-        $questions = $product->questions;  // Связь с моделью Product должна быть определена
+        $questions = $product->questions()->with('answers')->get(); // Подгружаем ответы вместе с вопросами
         return ProductQuestionResource::collection($questions);
     }
 

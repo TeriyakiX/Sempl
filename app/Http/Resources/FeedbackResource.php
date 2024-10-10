@@ -29,12 +29,7 @@ class FeedbackResource extends JsonResource
             'con_1' => $this->con_1,
             'con_2' => $this->con_2,
             'rating' => $this->rating,
-            'questions' => $this->answers->map(function ($answer) {
-                return [
-                    'question' => $answer->question->question,
-                    'answer' => $answer->answer,
-                ];
-            }),
+            'questions' => ProductQuestionResource::collection($this->questions), // Здесь предполагается, что вы загружаете связанные вопросы
             'photos' => $photoUrls,
             'videos' => $videoUrls,
             'created_at' => $this->created_at,

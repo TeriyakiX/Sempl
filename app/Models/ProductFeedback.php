@@ -113,12 +113,6 @@ class ProductFeedback extends Model
     }
 
     // Определение связи с ответами
-    public function answers()
-    {
-        return $this->hasMany(ProductFeedbackAnswer::class, 'feedback_id');
-    }
-
-    // Определение связи с вопросами
     public function questions()
     {
         return $this->hasMany(ProductFeedbackAnswer::class, 'feedback_id')

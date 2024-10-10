@@ -13,4 +13,9 @@ class ProductQuestion extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function answers()
+    {
+        return $this->hasMany(ProductQuestionAnswer::class, 'question_id');
+    }
 }
