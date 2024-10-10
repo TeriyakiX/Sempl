@@ -20,7 +20,14 @@ class AddressSuggestionController extends Controller
 
         // Получаем подсказки из DaData
         $suggestions = DaDataAddress::prompt($query, $count, Language::RU);
+        $filteredSuggestions = array_map(function ($suggestion) {
+            return [
+                'город' => $suggestion['data']['city'],
+                'улица' => $suggestion['data']['street_with_type'],
+                'дом' => $suggestion['data']['house'] ?? null,
+            ];
+        }, $suggestions);
 
-        return response()->json($suggestions);
+        return response()->json(['suggestions' => $filteredSuggestions]);
     }
 }
