@@ -18,7 +18,6 @@ class AddressSuggestionController extends Controller
             return response()->json(['error' => 'Запрос не может быть пустым'], 400);
         }
 
-        // Получаем подсказки из DaData
         $suggestions = DaDataAddress::prompt($query, $count, Language::RU);
         $filteredSuggestions = array_map(function ($suggestion) {
             return [
@@ -26,7 +25,7 @@ class AddressSuggestionController extends Controller
                 'street_with_type' => $suggestion['data']['street_with_type'],
                 'house' => $suggestion['data']['house'] ?? null,
             ];
-        }, $suggestions['suggestions']); // Note the access to 'suggestions' key
+        }, $suggestions['suggestions']);
 
         return response()->json(['suggestions' => $filteredSuggestions]);
     }
