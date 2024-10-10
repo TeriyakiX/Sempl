@@ -12,7 +12,7 @@ class AddressSuggestionController extends Controller
     public function suggest(Request $request)
     {
         $query = $request->input('query');
-        $count = $request->input('count', 5); // Количество подсказок, по умолчанию 5
+        $count = $request->input('count', 5);
 
         if (empty($query)) {
             return response()->json(['error' => 'Запрос не может быть пустым'], 400);
@@ -23,8 +23,6 @@ class AddressSuggestionController extends Controller
         // Фильтруем поля
         $filteredSuggestions = array_map(function ($suggestion) {
             return [
-                'value' => $suggestion['value'],
-                'unrestricted_value' => $suggestion['unrestricted_value'],
                 'postal_code' => $suggestion['data']['postal_code'],
                 'city' => $suggestion['data']['city'],
                 'street' => $suggestion['data']['street'],
