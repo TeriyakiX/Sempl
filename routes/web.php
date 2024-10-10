@@ -19,6 +19,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/products', function () {
+    return view('index');
+});
+
 Route::view('/upload-image', 'create_product'); // Ваш маршрут для отображения формы
 
 Route::post('/upload-photo', [UserController::class, 'uploadPhoto'])->name('upload.photo'); // Маршрут для обработки загрузки фотографии
