@@ -4,21 +4,23 @@
         @csrf
         <div class="form-group">
             <label for="name">Название продукта</label>
-            <input type="text" class="form-control" id="name" name="name" required>
+            <input type="text" class="form-control" id="name" name="name" required value="{{ old('name') }}">
         </div>
         <div class="form-group">
             <label for="description">Описание продукта</label>
-            <textarea class="form-control" id="description" name="description" required></textarea>
+            <textarea class="form-control" id="description" name="description" required>{{ old('description') }}</textarea>
         </div>
         <div class="form-group">
             <label for="photo">Фото продукта</label>
-            <input type="file" class="form-control" id="photo" name="photo">
+            <input type="file" class="form-control-file" id="photo" name="photo">
         </div>
         <div class="form-group">
             <label for="category_id">Категория</label>
             <select class="form-control" id="category_id" name="category_id" required>
                 @foreach($categories as $category)
-                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
                 @endforeach
             </select>
         </div>
