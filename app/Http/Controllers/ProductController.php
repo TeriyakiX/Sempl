@@ -24,16 +24,18 @@ class ProductController extends Controller
     {
         $validated = $request->validated();
 
-
         $product = Product::create($validated);
 
         if ($request->hasFile('photo')) {
-
             $photo = $request->file('photo');
+
             $path = $photo->store('products', 'public');
-            $product->photo = $path;
+
+            $product->photo = asset('storage/' . $path);
         }
+
         $product->save();
+
         return new ProductResource($product);
     }
 
@@ -52,7 +54,7 @@ class ProductController extends Controller
             $photoPath = $photo->storeAs('products', $photoName, 'public');
             $validated['photo'] = $photoPath;
 
-            // Удаляем старую фотографию, если она существует и не является URL
+
             if (filter_var($product->photo, FILTER_VALIDATE_URL) === false && Storage::disk('public')->exists($product->photo)) {
                 Storage::disk('public')->delete($product->photo);
             }
@@ -133,21 +135,18 @@ class ProductController extends Controller
         return response()->json(['message' => 'Product disliked successfully.']);
     }
 
-    // Метод для получения всех секретных продуктов
     public function getSecretProducts()
     {
         $secretProducts = Product::where('is_secret', true)->get();
         return ProductResource::collection($secretProducts);
     }
 
-    // Метод для получения деталей конкретного секретного продукта
     public function getSecretProductDetail($id)
     {
         $product = Product::where('is_secret', true)->findOrFail($id);
         return new ProductResource($product);
     }
 
-    // Метод для установки продукта как секретный
     public function makeSecret($id)
     {
         $product = Product::findOrFail($id);
@@ -168,35 +167,30 @@ class ProductController extends Controller
     }
 
 
-    // Метод для получения всех популярных продуктов
     public function getPopularProducts()
     {
         $popularProducts = Product::where('is_popular', true)->get();
         return ProductResource::collection($popularProducts);
     }
 
-    // Метод для получения подробной информации о популярном продукте по ID
     public function getPopularProductDetail($id)
     {
         $popularProduct = Product::where('is_popular', true)->findOrFail($id);
         return new ProductResource($popularProduct);
     }
 
-    // Метод для получения всех специальных продуктов
     public function getSpecialProducts()
     {
         $specialProducts = Product::where('is_special', true)->get();
         return ProductResource::collection($specialProducts);
     }
 
-    // Метод для получения подробной информации о специальном продукте по ID
     public function getSpecialProductDetail($id)
     {
         $specialProduct = Product::where('is_special', true)->findOrFail($id);
         return new ProductResource($specialProduct);
     }
 
-    // Методы для установки продукта как популярного
     public function makePopular($id)
     {
         $product = Product::findOrFail($id);
@@ -215,7 +209,6 @@ class ProductController extends Controller
         return response()->json(['message' => 'Product unmarked as popular successfully.']);
     }
 
-    // Методы для установки продукта как специального
     public function makeSpecial($id)
     {
         $product = Product::findOrFail($id);
