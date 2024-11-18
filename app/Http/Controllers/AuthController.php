@@ -220,7 +220,6 @@ class AuthController extends Controller
         $user->verification_code = null;
         $user->code_sent_at = null;
 
-        // Устанавливаем флаг завершения регистрации
         $user->is_registration_completed = true;
 
         $user->save();
