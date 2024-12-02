@@ -88,6 +88,9 @@ use App\Http\Controllers\ProductController;
             Route::get('/popular/{id}', [ProductController::class, 'getPopularProductDetail']); // Get a popular product by ID
             Route::get('/special', [ProductController::class, 'getSpecialProducts']); // Get all special products
             Route::get('/special/{id}', [ProductController::class, 'getSpecialProductDetail']); // Get a special product by ID
+
+
+            Route::get('/{productId}/questions-answers', [ProductFeedbackController::class, 'getQuestionsWithAnswers']);
         });
 
         Route::prefix('categories')->group(function () {
@@ -141,8 +144,6 @@ use App\Http\Controllers\ProductController;
 
         Route::post('product-feedbacks/{product_feedback}/like', [ProductFeedbackController::class, 'like']);
         Route::post('product-feedbacks/{product_feedback}/dislike', [ProductFeedbackController::class, 'dislike']);
-
-
 
         Route::prefix('product-feedbacks')->group(function () {
             Route::get('/', [ProductFeedbackController::class, 'index']); // Get all feedbacks

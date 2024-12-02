@@ -63,6 +63,11 @@ class ProductFeedback extends Model
         }
     }
 
+    public function productFeedbackAnswers()
+    {
+        return $this->hasMany(ProductFeedbackAnswer::class, 'feedback_id');
+    }
+
     public function isLiked()
     {
         return $this->likes > 0;

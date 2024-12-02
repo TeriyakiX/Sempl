@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\FeedbackRequest;
 use App\Http\Resources\FeedbackResource;
+use App\Models\FeedbackAnswer;
+use App\Models\FeedbackQuestion;
 use App\Models\Product;
 use App\Models\ProductFeedback;
 use App\Models\ProductFeedbackAnswer;
@@ -25,26 +27,46 @@ class ProductFeedbackController extends Controller
     {
         $user = JWTAuth::parseToken()->authenticate();
 
-        // Создаем отзыв
         $feedback = $this->createFeedback($request, $user);
 
 
-        if ($request->has('answers')) {
-            foreach ($request->answers as $answer) {
-                ProductFeedbackAnswer::create([
-                    'feedback_id' => $feedback->id,
-                    'question_id' => $answer['question_id'],
-                    'answer_id' => $answer['id'], // Здесь указываем id ответа
-                ]);
+        $answersData = [];
+        if ($request->has('answers') && is_array($request->answers)) {
+            foreach ($request->answers as $answerData) {
+
+                if (!isset($answerData['question_id']) || !isset($answerData['id'])) {
+                    return response()->json([
+                        'message' => 'Invalid answer data. Each answer must include question_id and id.',
+                    ], 400);
+                }
+
+                $answer = FeedbackAnswer::find($answerData['id']);
+
+                if ($answer) {
+
+                    $answersData[] = [
+                        'question_id' => $answerData['question_id'],
+                        'id' => $answer->id,
+                        'answer' => $answer->answer,
+                    ];
+
+                    ProductFeedbackAnswer::create([
+                        'feedback_id' => $feedback->id,
+                        'question_id' => $answerData['question_id'],
+                        'answer_id' => $answer->id,
+                        'product_id' => $request->product_id,
+                    ]);
+                }
             }
         }
 
-        // Остальной код обработки файлов и обновления информации о продукте
         $this->handleFiles($request, $feedback);
+
         $this->updateProductInfo($request->product_id);
+
         $this->updatePurchaseStatus($request->purchase_id, $request->product_id, $user->id);
 
-        return new FeedbackResource($feedback);
+        return new FeedbackResource($feedback, $answersData);
     }
 
     protected function createFeedback($request, $user)
@@ -202,5 +224,22 @@ class ProductFeedbackController extends Controller
         $reviews = $product->feedbacks()->get();
 
         return FeedbackResource::collection($reviews);
+    }
+
+
+    public function getQuestionsWithAnswers($productId)
+    {
+        // Проверяем, существует ли продукт
+        $product = Product::find($productId);
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+
+        // Получаем вопросы и их ответы для продукта
+        $questions = FeedbackQuestion::where('product_id', $productId)
+            ->with('answers') // Подгружаем связанные ответы
+            ->get();
+
+        return response()->json($questions, 200);
     }
 }

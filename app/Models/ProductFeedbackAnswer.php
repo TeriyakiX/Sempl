@@ -9,11 +9,7 @@ class ProductFeedbackAnswer extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'feedback_id',
-        'question_id',
-        'answer_id',
-    ];
+    protected $fillable = ['feedback_id', 'question_id', 'answer_id', 'product_id'];
 
     public function feedback()
     {
@@ -22,6 +18,11 @@ class ProductFeedbackAnswer extends Model
 
     public function question()
     {
-        return $this->belongsTo(ProductQuestion::class, 'question_id');
+        return $this->belongsTo(FeedbackQuestion::class, 'question_id');
+    }
+
+    public function answer()
+    {
+        return $this->belongsTo(FeedbackAnswer::class, 'answer_id');
     }
 }

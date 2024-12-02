@@ -23,7 +23,7 @@ class FeedbackRequest extends FormRequest
             'rating' => 'required|numeric|min:1|max:5',
             'answers' => 'array',
             'photos' => 'array',
-            'photos.*' => 'image',
+            'photos.*' => 'image|mimes:jpeg,png,jpg,gif,webp,heic',
             'videos' => 'array',
             'videos.*' => 'mimes:mp4,mov,ogg,qt',
         ];
