@@ -174,9 +174,9 @@ use App\Http\Controllers\ProductController;
             Route::post('/create', [QuestionController::class, 'store']); // Создание нового вопроса
         });
 
-        Route::post('/feedback/question', [FeedbackQuestionController::class, 'createQuestion']); // Create a new Question
-        Route::post('/feedback/question/{id}/answer', [FeedbackQuestionController::class, 'createAnswer']); // Create a new Answer
-        Route::get('/feedback/questions', [FeedbackQuestionController::class, 'getQuestions']); // Get all Questions
+        Route::post('/product/{productId}/question', [FeedbackQuestionController::class, 'createQuestion']); // Create a new Question for a product
+        Route::post('/product/{productId}/question/{id}/answer', [FeedbackQuestionController::class, 'createAnswer']); // Create a new Answer for a product question
+        Route::get('/product/{productId}/questions', [FeedbackQuestionController::class, 'getQuestions']); // Get all Questions for a product
 
         Route::get('/registration-questions', [RegistrationQuestionController::class, 'index']); // Get all RegistrationQuestions
 

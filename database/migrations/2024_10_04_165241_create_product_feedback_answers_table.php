@@ -10,12 +10,12 @@ return new class extends Migration
     {
         Schema::create('product_feedback_answers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('feedback_id')->constrained('product_feedback')->onDelete('cascade');
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->foreignId('question_id')->constrained('product_questions')->onDelete('cascade');
-            $table->unsignedBigInteger('answer_id')->nullable(); // Поле для связи с ответом
+            $table->unsignedBigInteger('answer_id')->nullable();
             $table->timestamps();
 
-            // Добавление внешнего ключа для поля answer_id, ссылаясь на product_question_answers
+            // Добавление внешнего ключа для поля answer_id
             $table->foreign('answer_id')->references('id')->on('product_question_answers')->onDelete('set null');
         });
     }
@@ -26,7 +26,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('product_feedback_answers', function (Blueprint $table) {
-            $table->dropForeign(['answer_id']); // Удаляем внешний ключ
+            $table->dropForeign(['answer_id']);
+            $table->dropForeign(['product_id']);
         });
 
         Schema::dropIfExists('product_feedback_answers');

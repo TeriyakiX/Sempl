@@ -9,7 +9,11 @@ class FeedbackAnswer extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['question_id', 'answer', 'feedback_id'];
+    protected $fillable = [
+        'question_id',
+        'answer',
+        'product_id',
+    ];
 
     public function question()
     {
