@@ -8,16 +8,14 @@ class FeedbackResource extends JsonResource
 {
     public function toArray($request)
     {
-        $photos = $this->photos ? json_decode($this->photos, true) : [];
-        $videos = $this->videos ? json_decode($this->videos, true) : [];
+        $media = $this->media ? json_decode($this->media, true) : [];
 
-        $photoUrls = array_map(function ($photo) {
-            return asset('storage/' . $photo);
-        }, $photos);
-
-        $videoUrls = array_map(function ($video) {
-            return asset('storage/' . $video);
-        }, $videos);
+        $mediaUrls = array_map(function ($mediaItem) {
+            return [
+                'type' => $mediaItem['type'],
+                'url' => asset('storage/' . $mediaItem['path']), // Формируем правильный путь
+            ];
+        }, $media);
 
         return [
             'id' => $this->id,
@@ -31,8 +29,7 @@ class FeedbackResource extends JsonResource
             'rating' => $this->rating,
             'questions' => ProductQuestionResource::collection($this->questions),
             'answers' => ProductFeedbackAnswerResource::collection($this->productFeedbackAnswers),
-            'photos' => $photoUrls,
-            'videos' => $videoUrls,
+            'media' => $mediaUrls, // Объединенное медиа
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

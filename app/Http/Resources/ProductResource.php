@@ -25,7 +25,7 @@ class ProductResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'photo' => $this->when($this->photo !== null, $this->photo),
+            'photo' => $this->when($this->photo !== null, url('storage/' . $this->photo)),
             'category' => $category ? new CategoryResource($category) : null,
             'subcategory' => $subcategory ? new CategoryResource($subcategory) : null,
             'rating' => $this->rating,

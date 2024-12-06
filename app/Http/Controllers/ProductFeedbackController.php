@@ -23,47 +23,42 @@ class ProductFeedbackController extends Controller
         $feedbacks = ProductFeedback::all();
         return FeedbackResource::collection($feedbacks);
     }
+
     public function store(FeedbackRequest $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-
         $feedback = $this->createFeedback($request, $user);
-
 
         $answersData = [];
         if ($request->has('answers') && is_array($request->answers)) {
             foreach ($request->answers as $answerData) {
-
                 if (!isset($answerData['question_id']) || !isset($answerData['id'])) {
-                    return response()->json([
-                        'message' => 'Invalid answer data. Each answer must include question_id and id.',
-                    ], 400);
+                    return response()->json(['message' => 'Invalid answer data. Each answer must include question_id and id.'], 400);
                 }
 
                 $answer = FeedbackAnswer::find($answerData['id']);
-
                 if ($answer) {
-
-                    $answersData[] = [
-                        'question_id' => $answerData['question_id'],
-                        'id' => $answer->id,
-                        'answer' => $answer->answer,
-                    ];
-
                     ProductFeedbackAnswer::create([
                         'feedback_id' => $feedback->id,
                         'question_id' => $answerData['question_id'],
                         'answer_id' => $answer->id,
                         'product_id' => $request->product_id,
                     ]);
+
+                    $answersData[] = [
+                        'question_id' => $answerData['question_id'],
+                        'id' => $answer->id,
+                        'answer' => $answer->answer,
+                    ];
                 }
             }
         }
 
+        // Обработка медиа
         $this->handleFiles($request, $feedback);
 
+        // Обновление информации о продукте и статусе покупки
         $this->updateProductInfo($request->product_id);
-
         $this->updatePurchaseStatus($request->purchase_id, $request->product_id, $user->id);
 
         return new FeedbackResource($feedback, $answersData);
@@ -89,30 +84,28 @@ class ProductFeedbackController extends Controller
 
     protected function handleFiles($request, $feedback)
     {
-        $photoPaths = [];
-        $videoPaths = [];
-
+        $mediaPaths = [];
         try {
-            // Обработка фотографий
-            if ($request->hasFile('photos')) {
-                foreach ($request->file('photos') as $photo) {
-                    $newName = time() . '_' . uniqid() . '.' . $photo->getClientOriginalExtension();
-                    $path = $photo->storeAs('feedback_photos', $newName, 'public');
-                    $photoPaths[] = $path;
+            if ($request->hasFile('media')) {
+                foreach ($request->file('media') as $key => $file) {
+                    $type = $file->getMimeType();
+                    $newName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+                    // Определяем тип файла (изображение или видео)
+                    if (str_contains($type, 'image')) {
+                        $path = $file->storeAs('feedback_photos', $newName, 'public');
+                        $mediaPaths[] = ['type' => 'photo', 'path' => $path];
+                    } elseif (str_contains($type, 'video')) {
+                        $path = $file->storeAs('feedback_videos', $newName, 'public');
+                        $mediaPaths[] = ['type' => 'video', 'path' => $path];
+                    } else {
+                        Log::warning("Unsupported file type: {$type}");
+                    }
                 }
             }
 
-            // Обработка видео
-            if ($request->hasFile('videos')) {
-                foreach ($request->file('videos') as $video) {
-                    $newName = time() . '_' . uniqid() . '.' . $video->getClientOriginalExtension();
-                    $path = $video->storeAs('feedback_videos', $newName, 'public');
-                    $videoPaths[] = $path;
-                }
-            }
-
-            $feedback->photos = json_encode($photoPaths);
-            $feedback->videos = json_encode($videoPaths);
+            // Сохраняем пути к медиа в JSON
+            $feedback->media = json_encode($mediaPaths);
             $feedback->save();
         } catch (\Exception $e) {
             Log::error('Error storing files: ' . $e->getMessage());
@@ -126,6 +119,7 @@ class ProductFeedbackController extends Controller
         $product->updateRating();
         $product->updateFeedbackCount();
     }
+
     protected function updatePurchaseStatus($purchaseId, $productId, $userId)
     {
         $purchase = Purchase::whereHas('products', function ($query) use ($productId) {
@@ -140,9 +134,6 @@ class ProductFeedbackController extends Controller
             $purchase->update(['status' => 'completed']);
         }
     }
-
-
-
 
     public function show(ProductFeedback $feedback)
     {
@@ -191,7 +182,6 @@ class ProductFeedbackController extends Controller
         }
 
         $feedback->save();
-
         return response()->json(['feedback' => new FeedbackResource($feedback)], 200);
     }
 
@@ -214,7 +204,6 @@ class ProductFeedbackController extends Controller
         }
 
         $feedback->save();
-
         return response()->json(['feedback' => new FeedbackResource($feedback)], 200);
     }
 
@@ -222,22 +211,18 @@ class ProductFeedbackController extends Controller
     {
         $product = Product::findOrFail($product);
         $reviews = $product->feedbacks()->get();
-
         return FeedbackResource::collection($reviews);
     }
 
-
     public function getQuestionsWithAnswers($productId)
     {
-        // Проверяем, существует ли продукт
         $product = Product::find($productId);
         if (!$product) {
             return response()->json(['message' => 'Product not found'], 404);
         }
 
-        // Получаем вопросы и их ответы для продукта
         $questions = FeedbackQuestion::where('product_id', $productId)
-            ->with('answers') // Подгружаем связанные ответы
+            ->with('answers')
             ->get();
 
         return response()->json($questions, 200);

@@ -23,7 +23,7 @@ class ProductFeedback extends Model
         'rating',
         'status',
         'delivery_date',
-        'photos',
+        'media',
         'likes',
         'dislikes',
         'liked_by_user',
