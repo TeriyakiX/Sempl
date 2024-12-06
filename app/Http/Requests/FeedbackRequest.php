@@ -24,7 +24,7 @@ class FeedbackRequest extends FormRequest
             'answers' => 'nullable|array',
             'answers.*.question_id' => 'required|exists:feedback_questions,id',
             'answers.*.id' => 'required|exists:feedback_answers,id',
-            'media.*' => 'file|mimes:jpg,jpeg,png,mp4,mov,avi|max:51200', // Максимум 50 MB
+            'media.*' => 'file|mimes:jpg,jpeg,png,mp4,mov,avi,heic,heif|max:1024000', // HEIC/HEIF добавлены
         ];
     }
 }
